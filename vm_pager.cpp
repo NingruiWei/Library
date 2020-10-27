@@ -1,13 +1,17 @@
 #include "vm_pager.h"
 #include <vector>
+#include <unordered_map>
+#include <cassert>
 using namespace std;
 
 unsigned int physmem_size;
 unsigned int swap_size;
+unsigned int swap_counter = 0;
 
 struct pager_page_t{
     page_table_entry_t base;
     bool reference_bit = 0;
+    bool swap_back = 0;
 };
 
 struct arena{
@@ -16,27 +20,33 @@ struct arena{
     pid_t process_id;
     uintptr_t arena_start = uintptr_t(VM_ARENA_BASEADDR);
     uintptr_t arena_valid_end = uintptr_t(VM_ARENA_BASEADDR);
+
 };
 
-vector<arena> arena_table;
-int curr_arena_index = -1;
-
+unordered_map<pid_t, arena*> arenas;
+int curr_pid = -1;
+bool first_time(){ // used the first time to know we set curr_pid
+    return curr_pid == -1;
+}
 void vm_init(unsigned int memory_pages, unsigned int swap_blocks){  
     physmem_size = memory_pages;
     swap_size = swap_blocks;
 };
 
 int vm_create(pid_t parent_pid, pid_t child_pid){
-    if(parent_pid != 0){
-
+    if(parent_pid != 0){// 498 part
+        assert(false);
+        return 0;
     }
     else{
-        arena temp_arena;
-        temp_arena.process_id = child_pid;
-        arena_table.push_back(temp_arena);
-        if(curr_arena_index == -1){
-            curr_arena_index = int(arena_table.size()) - 1;
+        arena* temp_arena = new arena;
+        temp_arena->process_id = child_pid;
+        if(first_time()){
+            curr_pid = child_pid;
         }
+        assert(arenas.find(curr_pid) == arenas.end());
+        arenas[curr_pid] = temp_arena;
+        return 0;
     }
 };
 
@@ -62,7 +72,7 @@ void vm_destroy(){
 };
 
 void *vm_map(const char *filename, unsigned int block){
-    if(arena_table[curr_arena_index].arena_valid_end == uintptr_t(VM_ARENA_BASEADDR) + VM_ARENA_SIZE){
+    if(arenas[curr_pid]->arena_valid_end == uintptr_t(VM_ARENA_BASEADDR) + VM_ARENA_SIZE){
         //arena is full
         return nullptr;
     }
@@ -70,14 +80,14 @@ void *vm_map(const char *filename, unsigned int block){
 
     }
     else{
-        if(swap blocks not full){ //We need some way to track arena's use of swap blocks
+        if(swap_counter < swap_size){ //We need some way to track arena's use of swap blocks
             int first_invalid_page = arena_valid_page_size() + 1;
             page_table_entry_t temp_page;
             temp_page.read_enable = 0;
             temp_page.write_enable = 0;
             page_table_base_register->ptes[first_invalid_page] = temp_page;
-            arena_table[curr_arena_index].arena_valid_end += VM_PAGESIZE;
-            return  (void *) arena_table[curr_arena_index].arena_valid_end;
+            arenas[curr_pid]->arena_valid_end += VM_PAGESIZE;
+            return  (void *) arenas[curr_pid]->arena_valid_end;
         }
         else{
             //Not enough swap blocks to hold all swap-backed virtual pages
