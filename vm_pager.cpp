@@ -27,7 +27,7 @@ int curr_pid = -1;
 unsigned int physmem_size;
 unsigned int swap_size;
 unsigned int swap_counter = 0;
-unsigned int phys_counter = 0;
+unsigned int phys_counter = 1;
 
 void vm_init(unsigned int memory_pages, unsigned int swap_blocks){  
     physmem_size = memory_pages;
@@ -91,6 +91,11 @@ int arena_valid_page_size(){
     return arena_size / VM_PAGESIZE;
 }
 
+void enable_page_protection(page_table_entry_t* disable_page){
+    disable_page->read_enable = 0;
+    disable_page->write_enable = 0;
+}
+
 void *vm_map(const char *filename, unsigned int block){
     if(arenas[curr_pid]->arena_valid_end == uintptr_t(VM_ARENA_BASEADDR) + VM_ARENA_SIZE){
         //arena is full
@@ -102,17 +107,25 @@ void *vm_map(const char *filename, unsigned int block){
     }
     else{
         if (phys_counter < physmem_size){
-            //
-            //
+            int first_invalid_page = arena_valid_page_size() + 1;
+            page_table_entry_t* temp_page = new page_table_entry_t;
+            enable_page_protection(temp_page);
+            page_table_base_register->ptes[first_invalid_page] = *temp_page;
+            arenas[curr_pid]->arena_valid_end += VM_PAGESIZE;
+            ((page_table_entry_t*)vm_physmem)[phys_counter] = *temp_page;
+            phys_counter++;
+            return  (void *) arenas[curr_pid]->arena_valid_end - VM_PAGESIZE;
         }
         else if(swap_counter < swap_size){ //We need some way to track arena's use of swap blocks
             int first_invalid_page = arena_valid_page_size() + 1;
-            page_table_entry_t temp_page;
-            temp_page.read_enable = 0;
-            temp_page.write_enable = 0;
-            page_table_base_register->ptes[first_invalid_page] = temp_page;
+            page_table_entry_t* temp_page = new page_table_entry_t;
+            enable_page_protection(temp_page);
+            page_table_base_register->ptes[first_invalid_page] = *temp_page;
             arenas[curr_pid]->arena_valid_end += VM_PAGESIZE;
-            return  (void *) arenas[curr_pid]->arena_valid_end;
+            ((page_table_entry_t*)vm_physmem)[0] = *temp_page;
+            file_write(nullptr, swap_counter, temp_page); //I AM CONCERNED ABOUT THIS LINE. TEMP_PAGE BAD, VM_PHYSMEM BUFFER GOOD. FIX THIS SHIT
+            swap_counter++;
+            return  (void *) arenas[curr_pid]->arena_valid_end - VM_PAGESIZE;
         }
         else{
             //Not enough swap blocks to hold all swap-backed virtual pages
@@ -121,11 +134,3 @@ void *vm_map(const char *filename, unsigned int block){
     }
     return nullptr;
 }
-
-// int file_read(const char* filename, unsigned int block, void* buf){
-
-// }
-
-// int file_write(const char* filename, unsigned int block, const void* buf){
-
-// }
