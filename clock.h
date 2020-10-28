@@ -3,16 +3,19 @@
 #include "vm_pager.h"
 #include "global_general.h"
 #include <vector>
-
+#include <list>
 using namespace std;
 
 class Clock {
     public:
-        vector<page_table_entry_t*> tlb;
-        int curr_index;
-        vector<bool> looked_at;
+        list<pager_page_t*> tlb;
+        int clock_hand;
+        int tlb_size;
         Clock();
         ~Clock();
+        void insert(pager_page_t* page);
+        void evict();
+        int spin_clock();
         
 };
 
