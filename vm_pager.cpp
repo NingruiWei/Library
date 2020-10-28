@@ -1,4 +1,5 @@
 #include "vm_pager.h"
+#include "global_general.h"
 #include <vector>
 #include <unordered_map>
 #include <cassert>
@@ -18,7 +19,6 @@ struct arena{
     pid_t process_id;
     uintptr_t arena_start = uintptr_t(VM_ARENA_BASEADDR);
     uintptr_t arena_valid_end = uintptr_t(VM_ARENA_BASEADDR);
-
 };
 
 priority_queue<int> phys_pq;
@@ -28,10 +28,14 @@ unsigned int physmem_size;
 unsigned int swap_size;
 unsigned int swap_counter = 0;
 unsigned int phys_counter = 1;
+const unsigned int buff_index = 0;
 
 void vm_init(unsigned int memory_pages, unsigned int swap_blocks){  
     physmem_size = memory_pages;
     swap_size = swap_blocks;
+    char *buff = new char[VM_PAGESIZE];
+    memset (buff, 0, VM_PAGESIZE);
+    ((char*)vm_physmem)[buff_index] = *buff;
 }
 
 int find_next_physmem_index(){
@@ -114,7 +118,7 @@ void *vm_map(const char *filename, unsigned int block){
             arenas[curr_pid]->arena_valid_end += VM_PAGESIZE;
             ((page_table_entry_t*)vm_physmem)[phys_counter] = *temp_page;
             phys_counter++;
-            return  (void *) arenas[curr_pid]->arena_valid_end - VM_PAGESIZE;
+            return  (void *) (arenas[curr_pid]->arena_valid_end - VM_PAGESIZE);
         }
         else if(swap_counter < swap_size){ //We need some way to track arena's use of swap blocks
             int first_invalid_page = arena_valid_page_size() + 1;
@@ -125,7 +129,7 @@ void *vm_map(const char *filename, unsigned int block){
             ((page_table_entry_t*)vm_physmem)[0] = *temp_page;
             file_write(nullptr, swap_counter, temp_page); //I AM CONCERNED ABOUT THIS LINE. TEMP_PAGE BAD, VM_PHYSMEM BUFFER GOOD. FIX THIS SHIT
             swap_counter++;
-            return  (void *) arenas[curr_pid]->arena_valid_end - VM_PAGESIZE;
+            return  (void *) (arenas[curr_pid]->arena_valid_end - VM_PAGESIZE);
         }
         else{
             //Not enough swap blocks to hold all swap-backed virtual pages
