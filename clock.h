@@ -8,9 +8,12 @@ using namespace std;
 
 class Clock {
     public:
+        vector<page_table_entry_t*> tlb;
+        int curr_index;
+        vector<bool> looked_at;
         Clock();
         ~Clock();
-        vector<page_table_entry_t*> tlb;
+        
 };
 
 #endif /* _CLOCK_H_ */
