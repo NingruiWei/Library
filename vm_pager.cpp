@@ -35,7 +35,19 @@ void vm_init(unsigned int memory_pages, unsigned int swap_blocks){
     physmem_size = memory_pages;
     swap_size = swap_blocks;
 };
+int find_next_physmem_index(){
+    if (phys_pq.empty()){
+        phys_pq.push(1);
+        return 0;
+    }
+    int temp = phys_pq.top();
+    phys_pq.pop();
+    if(phys_pq.empty()){
 
+        phys_pq.push(temp + 1);
+    }
+    return temp;
+}
 int vm_create(pid_t parent_pid, pid_t child_pid){
     if(parent_pid != 0){// 498 part
         assert(false);
