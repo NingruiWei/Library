@@ -7,6 +7,7 @@ using namespace std;
 unsigned int physmem_size;
 unsigned int swap_size;
 unsigned int swap_counter = 0;
+unsigned int phys_counter = 0;
 
 struct pager_page_t{
     page_table_entry_t base;
@@ -80,7 +81,13 @@ void *vm_map(const char *filename, unsigned int block){
 
     }
     else{
-        if(swap_counter < swap_size){ //We need some way to track arena's use of swap blocks
+        if (phys_counter < physmem_size){
+            
+
+
+
+        }
+        else if(swap_counter < swap_size){ //We need some way to track arena's use of swap blocks
             int first_invalid_page = arena_valid_page_size() + 1;
             page_table_entry_t temp_page;
             temp_page.read_enable = 0;
