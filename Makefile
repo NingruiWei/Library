@@ -1,7 +1,7 @@
 CC=g++ -g -Wall -fno-builtin
 
 # List of source files for your pager
-PAGER_SOURCES=file1.cpp file2.cpp
+PAGER_SOURCES=vm_app.cpp vm_arena.cpp vm_pager.cpp
 
 # Generate the names of the pager's object files
 PAGER_OBJS=${PAGER_SOURCES:.cpp=.o}
@@ -14,7 +14,7 @@ pager: ${PAGER_OBJS} libvm_pager.o
 	${CC} -o $@ $^
 
 # Compile an application program
-app: app.cpp libvm_app.o
+app: test0.cpp libvm_app.o
 	${CC} -o $@ $^ -ldl
 
 # Generic rules for compiling a source file to an object file

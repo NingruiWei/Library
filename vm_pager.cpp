@@ -4,12 +4,8 @@
 #include <cassert>
 #include <queue>
 #include <bits/stdc++.h>
+#include <iostream>
 using namespace std;
-
-unsigned int physmem_size;
-unsigned int swap_size;
-unsigned int swap_counter = 0;
-unsigned int phys_counter = 0;
 
 struct pager_page_t{
     page_table_entry_t base;
@@ -18,23 +14,26 @@ struct pager_page_t{
 };
 
 struct arena{
-
-    page_table_t page_table;
+    page_table_t *page_table = new page_table_t;
     pid_t process_id;
     uintptr_t arena_start = uintptr_t(VM_ARENA_BASEADDR);
     uintptr_t arena_valid_end = uintptr_t(VM_ARENA_BASEADDR);
 
 };
+
 priority_queue<int> phys_pq;
 unordered_map<pid_t, arena*> arenas;
 int curr_pid = -1;
-bool first_time(){ // used the first time to know we set curr_pid
-    return curr_pid == -1;
-}
+unsigned int physmem_size;
+unsigned int swap_size;
+unsigned int swap_counter = 0;
+unsigned int phys_counter = 0;
+
 void vm_init(unsigned int memory_pages, unsigned int swap_blocks){  
     physmem_size = memory_pages;
     swap_size = swap_blocks;
-};
+}
+
 int find_next_physmem_index(){
     if (phys_pq.empty()){
         phys_pq.push(1);
@@ -48,43 +47,49 @@ int find_next_physmem_index(){
     }
     return temp;
 }
+
 int vm_create(pid_t parent_pid, pid_t child_pid){
-    if(parent_pid != 0){// 498 part
+    if(arenas.find(parent_pid) != arenas.end()){ // 498 part
         assert(false);
         return 0;
     }
     else{
         arena* temp_arena = new arena;
         temp_arena->process_id = child_pid;
-        if(first_time()){
-            curr_pid = child_pid;
-        }
         assert(arenas.find(curr_pid) == arenas.end());
-        arenas[curr_pid] = temp_arena;
+        arenas[child_pid] = temp_arena;
         return 0;
     }
-};
+}
 
 void vm_switch(pid_t pid){
     //search arena table for arena with matching pid
     //evict and writeback any necessary information from the page table leaving
     //switch page_table_base_register to be a pointer to the new page_table_t from the new arena
-};
+    cout << "INSIDE SWITCH" << endl;
+    page_table_base_register = arenas[pid]->page_table;
+    curr_pid = pid;
+}
 
 
 
 int vm_fault(const void* addr, bool write_flag){
 
 
-
-};
+    return -1;
+}
 
 
 void vm_destroy(){
 
 
 
-};
+}
+
+int arena_valid_page_size(){
+    int arena_size = arenas[curr_pid]->arena_valid_end - arenas[curr_pid]->arena_start;
+    return arena_size / VM_PAGESIZE;
+}
 
 void *vm_map(const char *filename, unsigned int block){
     if(arenas[curr_pid]->arena_valid_end == uintptr_t(VM_ARENA_BASEADDR) + VM_ARENA_SIZE){
@@ -92,14 +97,15 @@ void *vm_map(const char *filename, unsigned int block){
         return nullptr;
     }
     if(filename){
-
+        //
+        //
+        //
     }
     else{
         if (phys_counter < physmem_size){
-
-
-
-
+            //
+            //
+            //
         }
         else if(swap_counter < swap_size){ //We need some way to track arena's use of swap blocks
             int first_invalid_page = arena_valid_page_size() + 1;
@@ -115,29 +121,13 @@ void *vm_map(const char *filename, unsigned int block){
             return nullptr;
         }
     }
+    return nullptr;
 }
 
-int file_read(const char* filename, unsigned int block, void* buf){
+// int file_read(const char* filename, unsigned int block, void* buf){
 
+// }
 
+// int file_write(const char* filename, unsigned int block, const void* buf){
 
-
-};
-
-int file_write(const char* filename, unsigned int block, const void* buf){
-
-
-
-
-
-};
-
-void* const vm_physmem{
-
-
-};
-
-int arena_valid_page_size(){
-    int arena_size = arenas[curr_pid]->arena_valid_end - arenas[curr_pid]->arena_start;
-    return arena_size / VM_PAGESIZE;
-}
+// }
