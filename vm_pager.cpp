@@ -2,6 +2,8 @@
 #include <vector>
 #include <unordered_map>
 #include <cassert>
+#include <queue>
+#include <bits/stdc++.h>
 using namespace std;
 
 unsigned int physmem_size;
@@ -23,7 +25,7 @@ struct arena{
     uintptr_t arena_valid_end = uintptr_t(VM_ARENA_BASEADDR);
 
 };
-
+priority_queue<int> phys_pq;
 unordered_map<pid_t, arena*> arenas;
 int curr_pid = -1;
 bool first_time(){ // used the first time to know we set curr_pid
@@ -82,7 +84,7 @@ void *vm_map(const char *filename, unsigned int block){
     }
     else{
         if (phys_counter < physmem_size){
-            
+
 
 
 
@@ -124,6 +126,6 @@ void* const vm_physmem{
 };
 
 int arena_valid_page_size(){
-    int arena_size = arena_table[curr_arena_index].arena_valid_end - arena_table[curr_arena_index].arena_start;
+    int arena_size = arenas[curr_pid]->arena_valid_end - arenas[curr_pid]->arena_start;
     return arena_size / VM_PAGESIZE;
 }
