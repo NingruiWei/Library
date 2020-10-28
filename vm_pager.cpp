@@ -99,11 +99,9 @@ void *vm_map(const char *filename, unsigned int block){
     if(filename){
         //
         //
-        //
     }
     else{
         if (phys_counter < physmem_size){
-            //
             //
             //
         }
