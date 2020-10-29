@@ -33,7 +33,8 @@ struct pager_page_t{
 };
 
 deque<pager_page_t*> clocker;
-vector<int> phys_index;
+deque<unsigned int> phys_index;
+deque<unsigned int> swap_index;
 unordered_map<pid_t, process*> processes;
 int curr_pid = -1;
 unsigned int physmem_size;
@@ -48,6 +49,9 @@ void vm_init(unsigned int memory_pages, unsigned int swap_blocks){
         phys_index.push_back(i);
     }
     swap_size = swap_blocks;
+    for(int i = 0; i < swap_size; i++){
+        swap_index.push_back(i);
+    }
     char *buff = new char[VM_PAGESIZE];
     memset (buff, 0, VM_PAGESIZE);
     ((char*)vm_physmem)[buff_index] = *buff;
@@ -92,14 +96,15 @@ void enable_page_protection(pager_page_t* disable_page){
 
 void evict(){
     while(true){
-        if(clocker.front()->reference_bit == true){
+        if(clocker.front()->reference_bit == true){ //Clock hand pointing at "1"
             clocker.front()->reference_bit = false;
             clocker.push_back(clocker.front());
             clocker.pop_front();
         }
-        else{
+        else{                                       //Clock hand pointing at "0"
             enable_page_protection(clocker.front());
             clocker.front()->resident_bit = 0;
+            phys_index.push_back(clocker.front()->base->ppage);
             clocker.pop_front();
             return;
         }
@@ -130,13 +135,15 @@ void *vm_map(const char *filename, unsigned int block){
         //
     }
     else{ // swap-backed
-        if(swap_counter < swap_size){
+        if(swap_counter < swap_size){ //Eager swap reservation check
+            assert(!swap_index.empty()); //Double checks that there is still swap space available
 
             int first_invalid_page = arena_valid_page_size() + 1;
             pager_page_t* temp_page = new pager_page_t;
             temp_page->swap_backed = true;
             temp_page->filename = filename;
-            temp_page->block = block;
+            temp_page->block = swap_index.front();
+            swap_index.pop_front();
             enable_page_protection(temp_page);
             page_table_base_register->ptes[first_invalid_page] = *temp_page->base;
             processes[curr_pid]->arena_valid_end += VM_PAGESIZE;
@@ -171,9 +178,12 @@ int vm_fault(const void* addr, bool write_flag){
 
     }
     else{ //Trying to read page
-        if(curr_page->resident_bit == false){ //Page is not resident
+        if(curr_page->resident_bit == false){ //Page is not already resident
             clock_insert(curr_page); //Bring page into residency (within clock)
-            curr_page->base->ppage;
+            curr_page->base->ppage = phys_index.front();
+            phys_index.pop_front();
+
+            
         }
         else{ //Page is already resident
             //
