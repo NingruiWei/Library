@@ -9,6 +9,7 @@ struct pager_page_t{
     bool reference_bit = false;
     const char *filename;
     unsigned int block;
+    bool swap_backed;
 };
 
 

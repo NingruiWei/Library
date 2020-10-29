@@ -9,7 +9,7 @@
 #include <iostream>
 using namespace std;
 
-struct arena{
+struct process{
     page_table_t *page_table = new page_table_t;
     pid_t process_id;
     uintptr_t arena_start = uintptr_t(VM_ARENA_BASEADDR);
@@ -18,7 +18,7 @@ struct arena{
 
 Clock clocker;
 priority_queue<int> phys_pq;
-unordered_map<pid_t, arena*> arenas;
+unordered_map<pid_t, process*> processes;
 int curr_pid = -1;
 unsigned int physmem_size;
 unsigned int swap_size;
@@ -50,15 +50,15 @@ int find_next_physmem_index(){
 }
 
 int vm_create(pid_t parent_pid, pid_t child_pid){
-    if(arenas.find(parent_pid) != arenas.end()){ // 498 part
+    if(processes.find(parent_pid) != processes.end()){ // 498 part
         assert(false);
         return 0;
     }
     else{
-        arena* temp_arena = new arena;
-        temp_arena->process_id = child_pid;
-        assert(arenas.find(curr_pid) == arenas.end());
-        arenas[child_pid] = temp_arena;
+        process* temp_process = new process;
+        temp_process->process_id = child_pid;
+        assert(processes.find(curr_pid) == processes.end());
+        processes[child_pid] = temp_process;
         return 0;
     }
 }
@@ -68,7 +68,7 @@ void vm_switch(pid_t pid){
     //evict and writeback any necessary information from the page table leaving
     //switch page_table_base_register to be a pointer to the new page_table_t from the new arena
     cout << "INSIDE SWITCH" << endl;
-    page_table_base_register = arenas[pid]->page_table;
+    page_table_base_register = processes[pid]->page_table;
     curr_pid = pid;
 }
 
@@ -88,47 +88,52 @@ void vm_destroy(){
 }
 
 int arena_valid_page_size(){
-    int arena_size = arenas[curr_pid]->arena_valid_end - arenas[curr_pid]->arena_start;
+    int arena_size = processes[curr_pid]->arena_valid_end - processes[curr_pid]->arena_start;
     return arena_size / VM_PAGESIZE;
 }
 
-void enable_page_protection(page_table_entry_t* disable_page){
-    disable_page->read_enable = 0;
-    disable_page->write_enable = 0;
+void enable_page_protection(pager_page_t* disable_page){
+    disable_page->base->read_enable = 0;
+    disable_page->base->write_enable = 0;
 }
 
 void *vm_map(const char *filename, unsigned int block){
-    if(arenas[curr_pid]->arena_valid_end == uintptr_t(VM_ARENA_BASEADDR) + VM_ARENA_SIZE){
+    if(processes[curr_pid]->arena_valid_end == uintptr_t(VM_ARENA_BASEADDR) + VM_ARENA_SIZE){
         //arena is full
         return nullptr;
     }
-    if(filename){
+    if(filename){ // file-backed
         //
         //
     }
-    else{
-        if (phys_counter < physmem_size){
+    else{ // swap-backed
+        if (phys_counter < physmem_size){ // physical memory is full
             int first_invalid_page = arena_valid_page_size() + 1;
-            page_table_entry_t* temp_page = new page_table_entry_t;
+            pager_page_t* temp_page = new pager_page_t;
+            temp_page->swap_backed = true;
             enable_page_protection(temp_page);
-            page_table_base_register->ptes[first_invalid_page] = *temp_page;
-            arenas[curr_pid]->arena_valid_end += VM_PAGESIZE;
-            ((page_table_entry_t*)vm_physmem)[phys_counter] = *temp_page;
+            page_table_base_register->ptes[first_invalid_page] = *temp_page->base; // 
+            processes[curr_pid]->arena_valid_end += VM_PAGESIZE;
+
+            // SHOULD ONLY CAST TO (char *) WHEN UTILIZING vm_physmem!
+            // ((page_table_entry_t*)vm_physmem)[phys_counter] = *temp_page;
+
             phys_counter++;
-            clocker.insert(temp_page, filename, block);
-            return  (void *) (arenas[curr_pid]->arena_valid_end - VM_PAGESIZE);
+            clocker.insert(temp_page->base, filename, block);
+            return  (void *) (processes[curr_pid]->arena_valid_end - VM_PAGESIZE);
         }
-        else if(swap_counter < swap_size){ //We need some way to track arena's use of swap blocks
+        // check if there are enough swap blocks to hold all swap-backed virtual pages (maybe should check both every time?)
+        else if(swap_counter < swap_size){ // We need some way to track arena's use of swap blocks
             int first_invalid_page = arena_valid_page_size() + 1;
-            page_table_entry_t* temp_page = new page_table_entry_t;
+            pager_page_t* temp_page = new pager_page_t;
             enable_page_protection(temp_page);
-            page_table_base_register->ptes[first_invalid_page] = *temp_page;
-            arenas[curr_pid]->arena_valid_end += VM_PAGESIZE;
-            ((page_table_entry_t*)vm_physmem)[0] = *temp_page;
+            page_table_base_register->ptes[first_invalid_page] = *temp_page->base;
+            processes[curr_pid]->arena_valid_end += VM_PAGESIZE;
+            //((page_table_entry_t*)vm_physmem)[0] = *temp_page;
             file_write(nullptr, swap_counter, temp_page); //I AM CONCERNED ABOUT THIS LINE. TEMP_PAGE BAD, VM_PHYSMEM BUFFER GOOD. FIX THIS SHIT
             swap_counter++;
-            clocker.insert(temp_page, filename, block);
-            return  (void *) (arenas[curr_pid]->arena_valid_end - VM_PAGESIZE);
+            clocker.insert(temp_page->base, filename, block);
+            return  (void *) (processes[curr_pid]->arena_valid_end - VM_PAGESIZE);
         }
         else{
             //Not enough swap blocks to hold all swap-backed virtual pages
