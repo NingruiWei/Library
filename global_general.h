@@ -6,8 +6,9 @@ extern unsigned int physmem_size;
 
 struct pager_page_t{
     page_table_entry_t* base;
-    bool reference_bit = 0;
-    bool swap_back = 0;
+    bool reference_bit = false;
+    const char *filename;
+    unsigned int block;
 };
 
 

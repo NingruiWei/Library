@@ -1,5 +1,6 @@
 #include "vm_pager.h"
 #include "global_general.h"
+#include "clock.h"
 #include <vector>
 #include <unordered_map>
 #include <cassert>
@@ -15,6 +16,7 @@ struct arena{
     uintptr_t arena_valid_end = uintptr_t(VM_ARENA_BASEADDR);
 };
 
+Clock clocker;
 priority_queue<int> phys_pq;
 unordered_map<pid_t, arena*> arenas;
 int curr_pid = -1;
@@ -30,6 +32,7 @@ void vm_init(unsigned int memory_pages, unsigned int swap_blocks){
     char *buff = new char[VM_PAGESIZE];
     memset (buff, 0, VM_PAGESIZE);
     ((char*)vm_physmem)[buff_index] = *buff;
+    clocker = Clock();
 }
 
 int find_next_physmem_index(){
@@ -112,6 +115,7 @@ void *vm_map(const char *filename, unsigned int block){
             arenas[curr_pid]->arena_valid_end += VM_PAGESIZE;
             ((page_table_entry_t*)vm_physmem)[phys_counter] = *temp_page;
             phys_counter++;
+            clocker.insert(temp_page, filename, block);
             return  (void *) (arenas[curr_pid]->arena_valid_end - VM_PAGESIZE);
         }
         else if(swap_counter < swap_size){ //We need some way to track arena's use of swap blocks
@@ -123,6 +127,7 @@ void *vm_map(const char *filename, unsigned int block){
             ((page_table_entry_t*)vm_physmem)[0] = *temp_page;
             file_write(nullptr, swap_counter, temp_page); //I AM CONCERNED ABOUT THIS LINE. TEMP_PAGE BAD, VM_PHYSMEM BUFFER GOOD. FIX THIS SHIT
             swap_counter++;
+            clocker.insert(temp_page, filename, block);
             return  (void *) (arenas[curr_pid]->arena_valid_end - VM_PAGESIZE);
         }
         else{
