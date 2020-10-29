@@ -7,17 +7,33 @@
 #include <queue>
 #include <bits/stdc++.h>
 #include <iostream>
+#include <deque>
 using namespace std;
 
 struct process{
-    page_table_t *page_table = new page_table_t;
+    pager_page_table_t *page_table = new pager_page_table_t;
+    page_table_t *infrastructure_page_table = new page_table_t;
     pid_t process_id;
     uintptr_t arena_start = uintptr_t(VM_ARENA_BASEADDR);
     uintptr_t arena_valid_end = uintptr_t(VM_ARENA_BASEADDR);
 };
 
-Clock clocker;
-priority_queue<int> phys_pq;
+struct pager_page_table_t{
+    pager_page_t pager_page_table[VM_ARENA_SIZE/VM_PAGESIZE];
+};
+
+struct pager_page_t{
+    page_table_entry_t* base;
+    bool reference_bit = false;
+    bool resident_bit = false;
+    bool dirty_bit = false;
+    const char *filename;
+    unsigned int block;
+    bool swap_backed;
+};
+
+deque<pager_page_t*> clocker;
+vector<int> phys_index;
 unordered_map<pid_t, process*> processes;
 int curr_pid = -1;
 unsigned int physmem_size;
@@ -28,25 +44,13 @@ const unsigned int buff_index = 0;
 
 void vm_init(unsigned int memory_pages, unsigned int swap_blocks){  
     physmem_size = memory_pages;
+    for(int i = 0; i < physmem_size; i++){
+        phys_index.push_back(i);
+    }
     swap_size = swap_blocks;
     char *buff = new char[VM_PAGESIZE];
     memset (buff, 0, VM_PAGESIZE);
     ((char*)vm_physmem)[buff_index] = *buff;
-    clocker = Clock();
-}
-
-int find_next_physmem_index(){
-    if (phys_pq.empty()){
-        phys_pq.push(1);
-        return 0;
-    }
-    int temp = phys_pq.top();
-    phys_pq.pop();
-    if(phys_pq.empty()){
-
-        phys_pq.push(temp + 1);
-    }
-    return temp;
 }
 
 int vm_create(pid_t parent_pid, pid_t child_pid){
@@ -68,22 +72,11 @@ void vm_switch(pid_t pid){
     //evict and writeback any necessary information from the page table leaving
     //switch page_table_base_register to be a pointer to the new page_table_t from the new arena
     cout << "INSIDE SWITCH" << endl;
-    page_table_base_register = processes[pid]->page_table;
+    page_table_base_register = processes[pid]->infrastructure_page_table;
     curr_pid = pid;
 }
 
-
-
-int vm_fault(const void* addr, bool write_flag){
-
-
-    return -1;
-}
-
-
 void vm_destroy(){
-
-
 
 }
 
@@ -97,6 +90,36 @@ void enable_page_protection(pager_page_t* disable_page){
     disable_page->base->write_enable = 0;
 }
 
+void evict(){
+    while(true){
+        if(clocker.front()->reference_bit == true){
+            clocker.front()->reference_bit = false;
+            clocker.push_back(clocker.front());
+            clocker.pop_front();
+        }
+        else{
+            enable_page_protection(clocker.front());
+            clocker.front()->resident_bit = 0;
+            clocker.pop_front();
+            return;
+        }
+    }
+}
+
+void clock_insert(pager_page_t* insert_page){
+    if(clocker.size() < physmem_size){
+        insert_page->reference_bit = true;
+        insert_page->resident_bit = true;
+        clocker.push_back(insert_page); //Push back is inserting the element and then moving the hand one place forward
+    }
+    else{
+        evict();
+        insert_page->reference_bit = true;
+        insert_page->resident_bit = true;
+        clocker.push_back(insert_page);
+    }
+}
+
 void *vm_map(const char *filename, unsigned int block){
     if(processes[curr_pid]->arena_valid_end == uintptr_t(VM_ARENA_BASEADDR) + VM_ARENA_SIZE){
         //arena is full
@@ -107,38 +130,53 @@ void *vm_map(const char *filename, unsigned int block){
         //
     }
     else{ // swap-backed
-        if (phys_counter < physmem_size){ // physical memory is full
+        if(swap_counter < swap_size){
+
             int first_invalid_page = arena_valid_page_size() + 1;
             pager_page_t* temp_page = new pager_page_t;
             temp_page->swap_backed = true;
-            enable_page_protection(temp_page);
-            page_table_base_register->ptes[first_invalid_page] = *temp_page->base; // 
-            processes[curr_pid]->arena_valid_end += VM_PAGESIZE;
-
-            // SHOULD ONLY CAST TO (char *) WHEN UTILIZING vm_physmem!
-            // ((page_table_entry_t*)vm_physmem)[phys_counter] = *temp_page;
-
-            phys_counter++;
-            clocker.insert(temp_page->base, filename, block);
-            return  (void *) (processes[curr_pid]->arena_valid_end - VM_PAGESIZE);
-        }
-        // check if there are enough swap blocks to hold all swap-backed virtual pages (maybe should check both every time?)
-        else if(swap_counter < swap_size){ // We need some way to track arena's use of swap blocks
-            int first_invalid_page = arena_valid_page_size() + 1;
-            pager_page_t* temp_page = new pager_page_t;
+            temp_page->filename = filename;
+            temp_page->block = block;
             enable_page_protection(temp_page);
             page_table_base_register->ptes[first_invalid_page] = *temp_page->base;
             processes[curr_pid]->arena_valid_end += VM_PAGESIZE;
-            //((page_table_entry_t*)vm_physmem)[0] = *temp_page;
-            file_write(nullptr, swap_counter, temp_page); //I AM CONCERNED ABOUT THIS LINE. TEMP_PAGE BAD, VM_PHYSMEM BUFFER GOOD. FIX THIS SHIT
-            swap_counter++;
-            clocker.insert(temp_page->base, filename, block);
-            return  (void *) (processes[curr_pid]->arena_valid_end - VM_PAGESIZE);
+
+            if (phys_counter < physmem_size){
+                phys_counter++;
+                clock_insert(temp_page);
+                return  (void *) (processes[curr_pid]->arena_valid_end - VM_PAGESIZE);
+            }
+            else{
+                swap_counter++;
+                clock_insert(temp_page);
+                return  (void *) (processes[curr_pid]->arena_valid_end - VM_PAGESIZE);
+            }
         }
         else{
-            //Not enough swap blocks to hold all swap-backed virtual pages
             return nullptr;
         }
     }
     return nullptr;
+}
+
+int vm_fault(const void* addr, bool write_flag){
+    if((unsigned int) addr - processes[curr_pid]->arena_start >= (processes[curr_pid]->arena_valid_end)){ //(Address - Start of Addresss Space) >= End of Valid Address space is an illegal call
+        return -1;
+    }
+
+    pager_page_t* curr_page = &processes[curr_pid]->page_table->pager_page_table[ ((unsigned int) addr - processes[curr_pid]->arena_start) / VM_PAGESIZE]; //Page address is trying to access
+    curr_page->reference_bit = true;
+
+    if(write_flag){ //Trying to write to page
+
+    }
+    else{ //Trying to read page
+        if(curr_page->resident_bit == false){ //Page is not resident
+            clock_insert(curr_page); //Bring page into residency (within clock)
+            curr_page->base->ppage;
+        }
+        else{ //Page is already resident
+            //
+        }
+    }
 }
