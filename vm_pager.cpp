@@ -61,6 +61,9 @@ int vm_create(pid_t parent_pid, pid_t child_pid){
     if(processes.find(parent_pid) != processes.end()){ // 498 part
         assert(false);
         return 0;
+
+
+
     }
     else{
         process* temp_process = new process;
@@ -77,13 +80,48 @@ void vm_switch(pid_t pid){
     //search arena table for arena with matching pid
     //evict and writeback any necessary information from the page table leaving
     //switch page_table_base_register to be a pointer to the new page_table_t from the new arena
-    cout << "INSIDE SWITCH" << endl;
+    //cout << "INSIDE SWITCH" << endl;
     page_table_base_register = processes[pid]->infrastructure_page_table;
     curr_pid = pid;
 }
 
-void vm_destroy(){
+void destroy_clock_page(pager_page_t* destroy_page){
+    while(true){
+        if(clocker.front() != destroy_page){
+            clocker.push_back(clocker.front());
+            clocker.pop_front();
+        }
+        else{
+            clocker.pop_front(); //remove page that is about to be deleted from clock
+            return;
+        }
+    }
+}
 
+void vm_destroy(){
+    for(size_t i = processes[curr_pid]->arena_start; i < processes[curr_pid]->arena_valid_end; i += VM_PAGESIZE){
+        pager_page_t* curr_page = &processes[curr_pid]->page_table->ptes[i/VM_PAGESIZE];
+
+        if(curr_page->resident_bit == true){ //If currently resident, remove from physmem and clock
+            phys_index.push_back(curr_page->base->ppage);
+            phys_counter--;
+            destroy_clock_page(curr_page);
+        }
+        
+        if(curr_page->swap_backed == true){ //Free up swap block for something new in swap space
+            swap_index.push_back(curr_page->block);
+            swap_counter--;
+        }
+
+        delete curr_page; //Delete the page (since it was dynamically allocated)
+    }
+
+    page_table_base_register = nullptr; //No current page table since we're deleting the one we're currently running
+
+    delete processes[curr_pid]->page_table; //Delete dynamically allocated memebers of process and dynamically allocated process
+    delete processes[curr_pid]->infrastructure_page_table;
+    delete processes[curr_pid];
+    processes.erase(curr_pid); //Remove process from map
 }
 
 int arena_valid_page_size(){
@@ -92,8 +130,17 @@ int arena_valid_page_size(){
 }
 
 void enable_page_protection(pager_page_t* disable_page){
+    disable_page->base->ppage = 0;
     disable_page->base->read_enable = 0;
     disable_page->base->write_enable = 0;
+}
+
+void evict_page(pager_page_t* reset_page){
+    enable_page_protection(reset_page);
+    reset_page->resident_bit = false;
+    reset_page->dirty_bit = false;
+    reset_page->reference_bit = false;
+    reset_page->privacy_bit = false;
 }
 
 void evict(){
@@ -105,14 +152,18 @@ void evict(){
         }
         else{                                       //Clock hand pointing at "0"
             enable_page_protection(clocker.front());
-            clocker.front()->resident_bit = 0;
             phys_index.push_back(clocker.front()->base->ppage);
+            phys_counter--;
 
             /*
                 Some kind of check for dirty and privacy bit
                 should call file_write to write the information back to the correct file
             */
-
+            if(clocker.front()->dirty_bit == true && clocker.front()->privacy_bit == true){
+               file_write(clocker.front()->filename, clocker.front()->block, &((char *)vm_physmem)[clocker.front()->base->ppage]);
+            }
+            evict_page(clocker.front());
+            
             clocker.pop_front();
             return;
         }
@@ -204,6 +255,7 @@ int vm_fault(const void* addr, bool write_flag){
             }
             else{
                 //File backed write
+                curr_page->privacy_bit = true;
             }
         }
 
@@ -232,6 +284,7 @@ int vm_fault(const void* addr, bool write_flag){
             }
             else{
                 //File backed read
+                curr_page->privacy_bit = true;
             }
         }
         
