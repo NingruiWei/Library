@@ -10,24 +10,23 @@
 using namespace std;
 
 struct pager_page_t{
-    page_table_entry_t* base;
+    page_table_entry_t* base = nullptr;
     bool reference_bit = false;
     bool resident_bit = false;
     bool dirty_bit = false;
     bool privacy_bit = false;
-    const char *filename;
-    unsigned int block;
-    bool swap_backed;
+    const char *filename = nullptr;
+    unsigned int block = 0;
+    bool swap_backed = false;
 };
 
-struct pager_page_table_t{
-    pager_page_t pager_page_table[VM_ARENA_SIZE/VM_PAGESIZE];
+struct pager_page_table_t {
+    pager_page_t ptes[VM_ARENA_SIZE/VM_PAGESIZE];
 };
-
 
 struct process{
-    pager_page_table_t *page_table = new pager_page_table_t;
-    page_table_t *infrastructure_page_table = new page_table_t;
+    pager_page_table_t *page_table;
+    page_table_t *infrastructure_page_table;
     pid_t process_id;
     uintptr_t arena_start = uintptr_t(VM_ARENA_BASEADDR);
     uintptr_t arena_valid_end = uintptr_t(VM_ARENA_BASEADDR);
@@ -66,6 +65,8 @@ int vm_create(pid_t parent_pid, pid_t child_pid){
     else{
         process* temp_process = new process;
         temp_process->process_id = child_pid;
+        temp_process->infrastructure_page_table = new page_table_t;
+        temp_process->page_table = new pager_page_table_t;
         assert(processes.find(curr_pid) == processes.end());
         processes[child_pid] = temp_process;
         return 0;
@@ -145,7 +146,7 @@ void *vm_map(const char *filename, unsigned int block){
         if(swap_counter < swap_size){ //Eager swap reservation check
             assert(!swap_index.empty()); //Double checks that there is still swap space available
 
-            int first_invalid_page = arena_valid_page_size() + 1;
+            int first_invalid_page = arena_valid_page_size();
             pager_page_t* temp_page = new pager_page_t;
             //page_table_base_register->ptes[first_invalid_page] = new page_table_entry_t;
             temp_page->base = &(page_table_base_register->ptes[first_invalid_page]);
@@ -162,17 +163,11 @@ void *vm_map(const char *filename, unsigned int block){
             temp_page->privacy_bit = false;
 
             processes[curr_pid]->arena_valid_end += VM_PAGESIZE;
+            processes[curr_pid]->page_table->ptes[first_invalid_page] = *temp_page;
+            processes[curr_pid]->infrastructure_page_table->ptes[first_invalid_page] = *temp_page->base;
 
-            if (phys_counter < physmem_size){
-                phys_counter++;
-                //clock_insert(temp_page); //Only want to bring things into residency when we fault
-                return  (void *) (processes[curr_pid]->arena_valid_end - VM_PAGESIZE);
-            }
-            else{
-                swap_counter++;
-                //clock_insert(temp_page);
-                return  (void *) (processes[curr_pid]->arena_valid_end - VM_PAGESIZE);
-            }
+            swap_counter++;
+            return  (void *) (processes[curr_pid]->arena_valid_end - VM_PAGESIZE);
         }
         else{
             return nullptr;
@@ -186,7 +181,7 @@ int vm_fault(const void* addr, bool write_flag){
         return -1;
     }
 
-    pager_page_t* curr_page = &processes[curr_pid]->page_table->pager_page_table[ ((uintptr_t) addr - processes[curr_pid]->arena_start) / VM_PAGESIZE]; //Page address is trying to access
+    pager_page_t* curr_page = &processes[curr_pid]->page_table->ptes[ ((uintptr_t) addr - processes[curr_pid]->arena_start) / VM_PAGESIZE]; //Page address is trying to access
     curr_page->reference_bit = true;
 
     if(write_flag){ //Trying to write to page
