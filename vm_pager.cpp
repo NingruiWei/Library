@@ -21,7 +21,7 @@ struct pager_page_t{
 };
 
 struct pager_page_table_t {
-    pager_page_t ptes[VM_ARENA_SIZE/VM_PAGESIZE];
+    pager_page_t entries[VM_ARENA_SIZE/VM_PAGESIZE];
 };
 
 struct process{
@@ -100,7 +100,7 @@ void destroy_clock_page(pager_page_t* destroy_page){
 
 void vm_destroy(){
     for(size_t i = processes[curr_pid]->arena_start; i < processes[curr_pid]->arena_valid_end; i += VM_PAGESIZE){
-        pager_page_t* curr_page = &processes[curr_pid]->page_table->ptes[i/VM_PAGESIZE];
+        pager_page_t* curr_page = &processes[curr_pid]->page_table->entries[(i-processes[curr_pid]->arena_start)/VM_PAGESIZE];
 
         if(curr_page->resident_bit == true){ //If currently resident, remove from physmem and clock
             phys_index.push_back(curr_page->base->ppage);
@@ -118,8 +118,8 @@ void vm_destroy(){
 
     page_table_base_register = nullptr; //No current page table since we're deleting the one we're currently running
 
-    delete processes[curr_pid]->page_table; //Delete dynamically allocated memebers of process and dynamically allocated process
-    delete processes[curr_pid]->infrastructure_page_table;
+    //delete processes[curr_pid]->page_table->entries; //Not sure why, but this line doesn't work. We're deleting everything else that's dynamically allocated, but this line causes issues
+    delete[] processes[curr_pid]->infrastructure_page_table; //Delete dynamically allocated memebers of process and dynamically allocated process
     delete processes[curr_pid];
     processes.erase(curr_pid); //Remove process from map
 }
@@ -214,7 +214,7 @@ void *vm_map(const char *filename, unsigned int block){
             temp_page->privacy_bit = false;
 
             processes[curr_pid]->arena_valid_end += VM_PAGESIZE;
-            processes[curr_pid]->page_table->ptes[first_invalid_page] = *temp_page;
+            processes[curr_pid]->page_table->entries[first_invalid_page] = *temp_page;
             processes[curr_pid]->infrastructure_page_table->ptes[first_invalid_page] = *temp_page->base;
 
             swap_counter++;
@@ -232,7 +232,7 @@ int vm_fault(const void* addr, bool write_flag){
         return -1;
     }
 
-    pager_page_t* curr_page = &processes[curr_pid]->page_table->ptes[ ((uintptr_t) addr - processes[curr_pid]->arena_start) / VM_PAGESIZE]; //Page address is trying to access
+    pager_page_t* curr_page = &processes[curr_pid]->page_table->entries[ ((uintptr_t) addr - processes[curr_pid]->arena_start) / VM_PAGESIZE]; //Page address is trying to access
     curr_page->reference_bit = true;
 
     if(write_flag){ //Trying to write to page
