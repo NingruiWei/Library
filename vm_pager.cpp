@@ -27,6 +27,7 @@ struct pager_page_t{
     bool reference_bit = false;
     bool resident_bit = false;
     bool dirty_bit = false;
+    bool privacy_bit = false;
     const char *filename;
     unsigned int block;
     bool swap_backed;
@@ -45,7 +46,7 @@ const unsigned int buff_index = 0;
 
 void vm_init(unsigned int memory_pages, unsigned int swap_blocks){  
     physmem_size = memory_pages;
-    for(int i = 0; i < physmem_size; i++){
+    for(int i = 1; i < physmem_size; i++){
         phys_index.push_back(i);
     }
     swap_size = swap_blocks;
@@ -105,6 +106,12 @@ void evict(){
             enable_page_protection(clocker.front());
             clocker.front()->resident_bit = 0;
             phys_index.push_back(clocker.front()->base->ppage);
+
+            /*
+                Some kind of check for dirty and privacy bit
+                should call file_write to write the information back to the correct file
+            */
+
             clocker.pop_front();
             return;
         }
@@ -140,22 +147,29 @@ void *vm_map(const char *filename, unsigned int block){
 
             int first_invalid_page = arena_valid_page_size() + 1;
             pager_page_t* temp_page = new pager_page_t;
+            temp_page->base = &(page_table_base_register->ptes[first_invalid_page]);
+
             temp_page->swap_backed = true;
             temp_page->filename = filename;
             temp_page->block = swap_index.front();
             swap_index.pop_front();
+
             enable_page_protection(temp_page);
-            page_table_base_register->ptes[first_invalid_page] = *temp_page->base;
+            temp_page->dirty_bit = false;
+            temp_page->resident_bit = false;
+            temp_page->reference_bit = false;
+            temp_page->privacy_bit = false;
+
             processes[curr_pid]->arena_valid_end += VM_PAGESIZE;
 
             if (phys_counter < physmem_size){
                 phys_counter++;
-                clock_insert(temp_page);
+                //clock_insert(temp_page); //Only want to bring things into residency when we fault
                 return  (void *) (processes[curr_pid]->arena_valid_end - VM_PAGESIZE);
             }
             else{
                 swap_counter++;
-                clock_insert(temp_page);
+                //clock_insert(temp_page);
                 return  (void *) (processes[curr_pid]->arena_valid_end - VM_PAGESIZE);
             }
         }
@@ -175,18 +189,65 @@ int vm_fault(const void* addr, bool write_flag){
     curr_page->reference_bit = true;
 
     if(write_flag){ //Trying to write to page
+        if(curr_page->resident_bit == false){
+            clock_insert(curr_page);
+            curr_page->base->ppage = phys_index.front();
+            phys_index.pop_front();
+            phys_counter++;
 
+            if(curr_page->swap_backed == true && curr_page->privacy_bit == false){
+                ((char *)vm_physmem)[curr_page->base->ppage] = ((char *) vm_physmem)[buff_index];
+                curr_page->privacy_bit = true;
+            }
+            else if(curr_page->swap_backed == true && curr_page->privacy_bit == true){
+                int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[curr_page->base->ppage]);
+                if(result == -1){
+                    //file_read was a failure
+                    assert(false);
+                }
+            }
+            else{
+                //File backed write
+            }
+        }
+
+        curr_page->base->read_enable = true;
+        curr_page->base->write_enable = true;
+        curr_page->dirty_bit = true;
     }
     else{ //Trying to read page
         if(curr_page->resident_bit == false){ //Page is not already resident
             clock_insert(curr_page); //Bring page into residency (within clock)
             curr_page->base->ppage = phys_index.front();
             phys_index.pop_front();
-
+            phys_counter++;
             
+            if(curr_page->swap_backed == true && curr_page->privacy_bit == false){ //Swapped back page that original has not been written to
+                ((char *)vm_physmem)[curr_page->base->ppage] = ((char *) vm_physmem)[buff_index];
+                curr_page->dirty_bit = false;
+            }
+            else if (curr_page->swap_backed == true && curr_page->privacy_bit == true){ //Swapped back page that original has had some write to (you read what was newly written to it)
+                int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[curr_page->base->ppage]);
+                if(result == -1){
+                    //file_read was a failure
+                    assert(false);
+                }
+                curr_page->dirty_bit = false;
+            }
+            else{
+                //File backed read
+            }
         }
-        else{ //Page is already resident
-            //
-        }
+        
+        // if(curr_page->dirty_bit == true){
+        //     curr_page->base->write_enable = true;
+        // }
+        // else{
+        //     curr_page->base->write_enable = false;
+        // }
+        assert(curr_page->base->write_enable == false);
+        curr_page->base->read_enable = true;
     }
+
+    return 0;
 }
