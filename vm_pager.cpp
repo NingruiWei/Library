@@ -1,6 +1,5 @@
 #include "vm_pager.h"
 #include "global_general.h"
-#include "clock.h"
 #include <vector>
 #include <unordered_map>
 #include <cassert>
@@ -9,18 +8,6 @@
 #include <iostream>
 #include <deque>
 using namespace std;
-
-struct process{
-    pager_page_table_t *page_table = new pager_page_table_t;
-    page_table_t *infrastructure_page_table = new page_table_t;
-    pid_t process_id;
-    uintptr_t arena_start = uintptr_t(VM_ARENA_BASEADDR);
-    uintptr_t arena_valid_end = uintptr_t(VM_ARENA_BASEADDR);
-};
-
-struct pager_page_table_t{
-    pager_page_t pager_page_table[VM_ARENA_SIZE/VM_PAGESIZE];
-};
 
 struct pager_page_t{
     page_table_entry_t* base;
@@ -31,6 +18,19 @@ struct pager_page_t{
     const char *filename;
     unsigned int block;
     bool swap_backed;
+};
+
+struct pager_page_table_t{
+    pager_page_t pager_page_table[VM_ARENA_SIZE/VM_PAGESIZE];
+};
+
+
+struct process{
+    pager_page_table_t *page_table = new pager_page_table_t;
+    page_table_t *infrastructure_page_table = new page_table_t;
+    pid_t process_id;
+    uintptr_t arena_start = uintptr_t(VM_ARENA_BASEADDR);
+    uintptr_t arena_valid_end = uintptr_t(VM_ARENA_BASEADDR);
 };
 
 deque<pager_page_t*> clocker;
@@ -46,11 +46,11 @@ const unsigned int buff_index = 0;
 
 void vm_init(unsigned int memory_pages, unsigned int swap_blocks){  
     physmem_size = memory_pages;
-    for(int i = 1; i < physmem_size; i++){
+    for(size_t i = 1; i < physmem_size; i++){
         phys_index.push_back(i);
     }
     swap_size = swap_blocks;
-    for(int i = 0; i < swap_size; i++){
+    for(size_t i = 0; i < swap_size; i++){
         swap_index.push_back(i);
     }
     char *buff = new char[VM_PAGESIZE];
@@ -147,6 +147,7 @@ void *vm_map(const char *filename, unsigned int block){
 
             int first_invalid_page = arena_valid_page_size() + 1;
             pager_page_t* temp_page = new pager_page_t;
+            //page_table_base_register->ptes[first_invalid_page] = new page_table_entry_t;
             temp_page->base = &(page_table_base_register->ptes[first_invalid_page]);
 
             temp_page->swap_backed = true;
@@ -181,11 +182,11 @@ void *vm_map(const char *filename, unsigned int block){
 }
 
 int vm_fault(const void* addr, bool write_flag){
-    if((unsigned int) addr - processes[curr_pid]->arena_start >= (processes[curr_pid]->arena_valid_end)){ //(Address - Start of Addresss Space) >= End of Valid Address space is an illegal call
+    if((uintptr_t) addr - processes[curr_pid]->arena_start >= (processes[curr_pid]->arena_valid_end)){ //(Address - Start of Addresss Space) >= End of Valid Address space is an illegal call
         return -1;
     }
 
-    pager_page_t* curr_page = &processes[curr_pid]->page_table->pager_page_table[ ((unsigned int) addr - processes[curr_pid]->arena_start) / VM_PAGESIZE]; //Page address is trying to access
+    pager_page_t* curr_page = &processes[curr_pid]->page_table->pager_page_table[ ((uintptr_t) addr - processes[curr_pid]->arena_start) / VM_PAGESIZE]; //Page address is trying to access
     curr_page->reference_bit = true;
 
     if(write_flag){ //Trying to write to page
