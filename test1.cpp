@@ -34,13 +34,13 @@ int main(){
     // p[15] = p[0];
     // p[15] = p[1];
     cout << "hello peoples" << endl;
-    for (int i = 16 ; i < 5000; ++i){
-        p[i] = 'h';
-    }
+    // for (int i = 16 ; i < 5000; ++i){
+    //     p[i] = 'h';
+    // }
 
-    for (int i = 0 ; i < 5000; ++i){
-        cout << p[i];
-    }
+    // for (int i = 0 ; i < 5000; ++i){
+    //     cout << p[i];
+    // }
 
     
 }

@@ -21,7 +21,8 @@ struct pager_page_t{
 };
 
 struct pager_page_table_t {
-    pager_page_t entries[VM_ARENA_SIZE/VM_PAGESIZE];
+    //vector<pager_page_t*> entries(VM_ARENA_SIZE/VM_PAGESIZE);
+    pager_page_t* entries[VM_ARENA_SIZE/VM_PAGESIZE];
 };
 
 struct process{
@@ -99,38 +100,27 @@ void destroy_clock_page(pager_page_t* destroy_page){
 }
 
 void vm_destroy(){
-    cout << "spot 1" << endl;
     for(size_t i = processes[curr_pid]->arena_start; i < processes[curr_pid]->arena_valid_end; i += VM_PAGESIZE){
-        pager_page_t* curr_page = &processes[curr_pid]->page_table->entries[(i-processes[curr_pid]->arena_start)/VM_PAGESIZE];
-        cout << "spot 2" << endl;
+        pager_page_t* curr_page = processes[curr_pid]->page_table->entries[(i-processes[curr_pid]->arena_start)/VM_PAGESIZE];
         if(curr_page->resident_bit == true){ //If currently resident, remove from physmem and clock
-        cout << "spot 3" << endl;
             phys_index.push_back(curr_page->base->ppage);
             phys_counter--;
             destroy_clock_page(curr_page);
-            cout << "spot 4" << endl;
         }
-        cout << "spot alpha" << endl;
         if(curr_page->swap_backed == true){ //Free up swap block for something new in swap space
-            cout << "spot 5" << endl;
             swap_index.push_back(curr_page->block);
             swap_counter--;
-            cout << "spot 6" << endl;
         }
-        cout << "spot 7" << endl;
         delete curr_page; //Delete the page (since it was dynamically allocated)
-        cout << "spot 8" << endl;
     }
-    cout << "spot 9" << endl;
     page_table_base_register = nullptr; //No current page table since we're deleting the one we're currently running
-    cout << "spot 10" << endl;
-    //delete processes[curr_pid]->page_table->entries; //Not sure why, but this line doesn't work. We're deleting everything else that's dynamically allocated, but this line causes issues
-    delete[] processes[curr_pid]->infrastructure_page_table; //Delete dynamically allocated memebers of process and dynamically allocated process
-    cout << "spot 11" << endl;
+    delete processes[curr_pid]->page_table; //Not sure why, but this line doesn't work. We're deleting everything else that's dynamically allocated, but this line causes issues
+    delete processes[curr_pid]->infrastructure_page_table; //Delete dynamically allocated memebers of process and dynamically allocated process
+
+    // can only call delete[] if you call new[]
+
     delete processes[curr_pid];
-    cout << "fuck you paul" << endl;
     processes.erase(curr_pid); //Remove process from map
-    cout << "jk nerd" << endl;
 }
 
 int arena_valid_page_size(){
@@ -224,7 +214,7 @@ void *vm_map(const char *filename, unsigned int block){
             temp_page->privacy_bit = false;
 
             processes[curr_pid]->arena_valid_end += VM_PAGESIZE;
-            processes[curr_pid]->page_table->entries[first_invalid_page] = *temp_page;
+            processes[curr_pid]->page_table->entries[first_invalid_page] = temp_page;
             processes[curr_pid]->infrastructure_page_table->ptes[first_invalid_page] = *temp_page->base;
 
             swap_counter++;
@@ -243,7 +233,7 @@ int vm_fault(const void* addr, bool write_flag){
         return -1;
     }
    
-    pager_page_t* curr_page = &processes[curr_pid]->page_table->entries[ ((uintptr_t) addr - processes[curr_pid]->arena_start) / VM_PAGESIZE]; //Page address is trying to access
+    pager_page_t* curr_page = processes[curr_pid]->page_table->entries[ ((uintptr_t) addr - processes[curr_pid]->arena_start) / VM_PAGESIZE]; //Page address is trying to access
     curr_page->reference_bit = true;
    
     if(write_flag){ //Trying to write to page
