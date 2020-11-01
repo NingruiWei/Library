@@ -1,5 +1,4 @@
 #include "vm_pager.h"
-#include "global_general.h"
 #include <vector>
 #include <unordered_map>
 #include <cassert>
