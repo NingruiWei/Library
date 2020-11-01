@@ -37,6 +37,7 @@ deque<pager_page_t*> clocker;
 deque<unsigned int> phys_index;
 deque<unsigned int> swap_index;
 unordered_map<pid_t, process*> processes;
+unordered_map<string, pager_page_t*> filebacked_map;
 int curr_pid = -1;
 unsigned int physmem_size;
 unsigned int swap_size;
@@ -191,6 +192,20 @@ bool invalid_filename_address(const char *filename) {
     return processes[curr_pid]->arena_start > (uintptr_t)filename || (uintptr_t)filename >= processes[curr_pid]->arena_valid_end;
 }
 
+pager_page_t* new_pager_page(const char* filename, unsigned int block){
+    pager_page_t* return_pager_page = new pager_page_t;
+
+    return_pager_page->filename = filename;
+    return_pager_page->block = block;
+
+    return_pager_page->resident_bit = false;
+    return_pager_page->dirty_bit = false;
+    return_pager_page->reference_bit = false;
+    return_pager_page->pinned = false;
+
+    return return_pager_page;
+}
+
 void *vm_map(const char *filename, unsigned int block){
     // cout << "hi map here" << endl;
     if(processes[curr_pid]->arena_valid_end == uintptr_t(VM_ARENA_BASEADDR) + VM_ARENA_SIZE){
@@ -217,10 +232,24 @@ void *vm_map(const char *filename, unsigned int block){
         char * copy_str = new char[filename_offset];
         filename_str.copy(copy_str, filename_offset);
 
-        // if(fileback_map.find(copy_string+block) == fileback_map.end()){
-        //     //create new page to add to fileback map
-        // }
-        // return fileback_map[copy_string+block];
+        int first_invalid_page = arena_valid_page_size();
+        filename_str += to_string(block);
+        if(filebacked_map.find(filename_str) == filebacked_map.end()){
+            //create new page to add to fileback map
+
+            pager_page_t* temp_page = new_pager_page(copy_str, block);
+            temp_page->base = &(page_table_base_register->ptes[first_invalid_page]);
+            enable_page_protection(temp_page);
+
+            filebacked_map[filename_str] = temp_page;
+        }
+
+        //Add page, from filebacked_map, to current process page table
+        processes[curr_pid]->arena_valid_end += VM_PAGESIZE;
+        processes[curr_pid]->page_table->entries[first_invalid_page] = filebacked_map[filename_str];
+        processes[curr_pid]->infrastructure_page_table->ptes[first_invalid_page] = *filebacked_map[filename_str]->base;
+
+        return  (void *) (processes[curr_pid]->arena_valid_end - VM_PAGESIZE);
 
     }
     else{ // swap-backed
@@ -228,20 +257,15 @@ void *vm_map(const char *filename, unsigned int block){
             assert(!swap_index.empty()); //Double checks that there is still swap space available
 
             int first_invalid_page = arena_valid_page_size();
-            pager_page_t* temp_page = new pager_page_t;
-            //page_table_base_register->ptes[first_invalid_page] = new page_table_entry_t;
+            pager_page_t* temp_page = new_pager_page(filename, block);
+
             temp_page->base = &(page_table_base_register->ptes[first_invalid_page]);
+            enable_page_protection(temp_page);
 
             temp_page->swap_backed = true;
             temp_page->filename = filename;
             temp_page->block = swap_index.front();
             swap_index.pop_front();
-
-            enable_page_protection(temp_page);
-            temp_page->dirty_bit = false;
-            temp_page->resident_bit = false;
-            temp_page->reference_bit = false;
-            temp_page->privacy_bit = false;
 
             processes[curr_pid]->arena_valid_end += VM_PAGESIZE;
             processes[curr_pid]->page_table->entries[first_invalid_page] = temp_page;
