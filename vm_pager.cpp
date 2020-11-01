@@ -200,6 +200,7 @@ void *vm_map(const char *filename, unsigned int block){
     }
     if(filename){ // file-backed
         unsigned int filename_offset = 0;
+        string filename_str;
         while (1) {
             const char * id = filename + filename_offset;
             if (invalid_filename_address(id)) {
@@ -208,20 +209,20 @@ void *vm_map(const char *filename, unsigned int block){
             vm_fault(id, false);
             unsigned int ppage = page_table_base_register->ptes[((uintptr_t)id - processes[curr_pid]->arena_start)/VM_PAGESIZE].ppage;
             ppage = (ppage * VM_PAGESIZE) + (filename_offset % VM_PAGESIZE);
+            filename_str += ((char*) vm_physmem)[ppage];
+            filename_offset += 1;
             if(((char*) vm_physmem)[ppage] == '\0'){
                 break;
             }
-            filename_offset += 1;
         }
-        char * copy_string = new char[filename_offset];
-        strcpy(copy_string, filename);
-
+        char * copy_str = new char[filename_offset];
+        filename_str.copy(copy_str, filename_offset);
 
         // if(fileback_map.find(copy_string+block) == fileback_map.end()){
         //     //create new page to add to fileback map
         // }
-
         // return fileback_map[copy_string+block];
+
     }
     else{ // swap-backed
         if(swap_counter < swap_size){ //Eager swap reservation check
