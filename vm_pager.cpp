@@ -18,6 +18,7 @@ struct pager_page_t{
     const char *filename = nullptr;
     unsigned int block = 0;
     bool swap_backed = false;
+    bool pinned = false;
 };
 
 struct pager_page_table_t {
@@ -56,6 +57,10 @@ void vm_init(unsigned int memory_pages, unsigned int swap_blocks){
     char *buff = new char[VM_PAGESIZE];
     memset (buff, 0, VM_PAGESIZE);
     ((char*)vm_physmem)[buff_index] = *buff;
+    pager_page_t* zero = new pager_page_t;
+    zero->resident_bit = true;
+    zero->pinned = true;
+    clocker.push_back(zero);
 }
 
 int vm_create(pid_t parent_pid, pid_t child_pid){
@@ -143,8 +148,8 @@ void evict_page(pager_page_t* reset_page){
 }
 
 void evict(){
-    while(true){
-        if(clocker.front()->reference_bit == true){ //Clock hand pointing at "1"
+    while(1){
+        if(clocker.front()->reference_bit == true || clocker.front()->pinned == true){ //Clock hand pointing at "1"
             clocker.front()->reference_bit = false;
             clocker.push_back(clocker.front());
             clocker.pop_front();
@@ -183,6 +188,10 @@ void clock_insert(pager_page_t* insert_page){
     }
 }
 
+bool invalid_filename_address(const char *filename) {
+    return processes[curr_pid]->arena_start > (uintptr_t)filename || (uintptr_t)filename >= processes[curr_pid]->arena_valid_end;
+}
+
 void *vm_map(const char *filename, unsigned int block){
     // cout << "hi map here" << endl;
     if(processes[curr_pid]->arena_valid_end == uintptr_t(VM_ARENA_BASEADDR) + VM_ARENA_SIZE){
@@ -190,8 +199,15 @@ void *vm_map(const char *filename, unsigned int block){
         return nullptr;
     }
     if(filename){ // file-backed
-        //
-        //
+        unsigned int filename_offset = 0;
+        while (1) {
+            if (invalid_filename_address(filename)) {
+                return nullptr;
+            }
+            const char * id = filename + filename_offset;
+            vm_fault(id, false);
+        }
+
     }
     else{ // swap-backed
         if(swap_counter < swap_size){ //Eager swap reservation check
@@ -298,7 +314,6 @@ int vm_fault(const void* addr, bool write_flag){
         // else{
         //     curr_page->base->write_enable = false;
         // }
-        assert(curr_page->base->write_enable == false);
         curr_page->base->read_enable = true;
     }
 
