@@ -21,14 +21,14 @@ int main()
     char *p = (char *) vm_map (filename, 0);
     char* matt = (char*) vm_map (filename, 0);
     /* Print the first speech from the file */
-    for (unsigned int i=0; i<100; i++) {
+    for (unsigned int i=0; i<2561; i++) {
 	    cout << p[i];
     }
-    for (unsigned int i=0; i<100; i++) {
+    for (unsigned int i=0; i<2561; i++) {
 	    matt[i] = 'b';
     }
 
-    for (unsigned int i=0; i<100; i++) {
+    for (unsigned int i=0; i<2561; i++) {
 	    cout << p[i];
     }
     
