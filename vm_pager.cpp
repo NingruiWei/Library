@@ -9,7 +9,8 @@
 using namespace std;
 
 struct pager_page_t{
-    page_table_entry_t* base = nullptr;
+    vector<pair<int, page_table_entry_t*>> page_table_entries;
+    //page_table_entry_t* base = nullptr;
     bool reference_bit = false;
     bool resident_bit = false;
     bool dirty_bit = false;
@@ -133,14 +134,16 @@ int arena_valid_page_size(){
     return arena_size / VM_PAGESIZE;
 }
 
-void enable_page_protection(pager_page_t* disable_page){
-    disable_page->base->ppage = 0;
-    disable_page->base->read_enable = 0;
-    disable_page->base->write_enable = 0;
+void enable_page_protection(page_table_entry_t* disable_page){
+    disable_page->ppage = 0;
+    disable_page->read_enable = 0;
+    disable_page->write_enable = 0;
 }
 
 void evict_page(pager_page_t* reset_page){
-    enable_page_protection(reset_page);
+    for(pair<int, page_table_entry_t*> entry : reset_page->page_table_entries){
+        enable_page_protection(entry.second);
+    }
     reset_page->resident_bit = false;
     reset_page->dirty_bit = false;
     reset_page->reference_bit = false;
@@ -155,17 +158,15 @@ void evict(){
             clocker.pop_front();
         }
         else{                                       //Clock hand pointing at "0"
-            enable_page_protection(clocker.front());
-            phys_index.push_back(clocker.front()->base->ppage);
-            phys_counter--;
-
             /*
                 Some kind of check for dirty and privacy bit
                 should call file_write to write the information back to the correct file
             */
             if(clocker.front()->dirty_bit == true && clocker.front()->privacy_bit == true){
-               file_write(clocker.front()->filename, clocker.front()->block, &((char *)vm_physmem)[clocker.front()->base->ppage]);
+               file_write(clocker.front()->filename, clocker.front()->block, &((char *)vm_physmem)[clocker.front()->page_table_entries.front().second->ppage]);
             }
+            phys_index.push_back(clocker.front()->page_table_entries.front().second->ppage);
+            phys_counter--;
             evict_page(clocker.front());
             
             clocker.pop_front();
@@ -238,16 +239,25 @@ void *vm_map(const char *filename, unsigned int block){
             //create new page to add to fileback map
 
             pager_page_t* temp_page = new_pager_page(copy_str, block);
-            temp_page->base = &(page_table_base_register->ptes[first_invalid_page]);
-            enable_page_protection(temp_page);
 
             filebacked_map[addition] = temp_page;
         }
 
+        page_table_entry_t* temp_page_table_entry = &(page_table_base_register->ptes[first_invalid_page]);
+        if(!filebacked_map[addition]->page_table_entries.empty()){
+            temp_page_table_entry->ppage = filebacked_map[addition]->page_table_entries.front().second->ppage;
+            temp_page_table_entry->read_enable = filebacked_map[addition]->page_table_entries.front().second->read_enable;
+            temp_page_table_entry->write_enable = filebacked_map[addition]->page_table_entries.front().second->write_enable;
+        }
+        else{
+            enable_page_protection(temp_page_table_entry);
+        }
+        enable_page_protection(temp_page_table_entry);
+
         //Add page, from filebacked_map, to current process page table
         processes[curr_pid]->arena_valid_end += VM_PAGESIZE;
         processes[curr_pid]->page_table->entries[first_invalid_page] = filebacked_map[addition];
-        processes[curr_pid]->infrastructure_page_table->ptes[first_invalid_page] = *filebacked_map[addition]->base;
+        processes[curr_pid]->infrastructure_page_table->ptes[first_invalid_page] = *temp_page_table_entry;
 
         return  (void *) (processes[curr_pid]->arena_valid_end - VM_PAGESIZE);
 
@@ -259,8 +269,16 @@ void *vm_map(const char *filename, unsigned int block){
             int first_invalid_page = arena_valid_page_size();
             pager_page_t* temp_page = new_pager_page(filename, block);
 
-            temp_page->base = &(page_table_base_register->ptes[first_invalid_page]);
-            enable_page_protection(temp_page);
+            page_table_entry_t* temp_page_table_entry = &(page_table_base_register->ptes[first_invalid_page]);
+            if(!temp_page->page_table_entries.empty()){
+                temp_page_table_entry->ppage = temp_page->page_table_entries.front().second->ppage;
+                temp_page_table_entry->read_enable = temp_page->page_table_entries.front().second->read_enable;
+                temp_page_table_entry->write_enable = temp_page->page_table_entries.front().second->write_enable;
+            }
+            else{
+                enable_page_protection(temp_page_table_entry);
+            }
+            temp_page->page_table_entries.push_back(make_pair(curr_pid, temp_page_table_entry));
 
             temp_page->swap_backed = true;
             temp_page->filename = filename;
@@ -269,7 +287,7 @@ void *vm_map(const char *filename, unsigned int block){
 
             processes[curr_pid]->arena_valid_end += VM_PAGESIZE;
             processes[curr_pid]->page_table->entries[first_invalid_page] = temp_page;
-            processes[curr_pid]->infrastructure_page_table->ptes[first_invalid_page] = *temp_page->base;
+            processes[curr_pid]->infrastructure_page_table->ptes[first_invalid_page] = *temp_page_table_entry;
 
             swap_counter++;
             return  (void *) (processes[curr_pid]->arena_valid_end - VM_PAGESIZE);
@@ -319,6 +337,14 @@ int vm_fault(const void* addr, bool write_flag){
                 
             }
         }
+        else if(curr_page->swap_backed == false){
+            curr_page->privacy_bit = true;
+            int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->base->ppage)]);
+            if(result == -1){
+                //file_read was a failure
+                assert(false);
+            }
+        }
      
         curr_page->base->read_enable = true;
         curr_page->base->write_enable = true;
@@ -355,6 +381,15 @@ int vm_fault(const void* addr, bool write_flag){
                 curr_page->dirty_bit = false;
             }
         }
+        else if(curr_page->swap_backed == false){
+            curr_page->privacy_bit = true;
+            int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->base->ppage)]);
+            if(result == -1){
+                //file_read was a failure
+                assert(false);
+            }
+        }
+     
         
         // if(curr_page->dirty_bit == true){
         //     curr_page->base->write_enable = true;
