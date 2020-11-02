@@ -38,9 +38,13 @@ int main() {
     cout << "stuff happens" << endl;
 
 	for (unsigned int i = 0; i < 30; i++) {
+        mattias[i] = '<';
 		superman[i] = 'h';
+        victor[i] = '>';
 	}
     print_block(superman);
+    print_block(mattias);
+    print_block(victor);
     cout << "break" << endl;
 	for (unsigned int i = 0; i < 30; i++) {
 		cout << mattias[i] << victor[i] << superman[i] << paul[i] << endl;
