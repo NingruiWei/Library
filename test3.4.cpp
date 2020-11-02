@@ -15,7 +15,7 @@ int main() {
 
 	/* Print the first speech from the file */
 	for (unsigned int i = 0; i < 30; i++) {
-		cout << mattias[i] << victor[i] << superman[i] << paul[i] << endl;;
+		cout << mattias[i] << victor[i] << superman[i] << paul[i] << endl;
 	}
 
 	for (unsigned int i = 0; i < 30; i++) {
@@ -25,7 +25,7 @@ int main() {
 	cout << endl;
 
 	for (unsigned int i = 0; i < 30; i++) {
-		cout << mattias[i] << victor[i] << superman[i] << paul[i] << endl;;
+		cout << mattias[i] << victor[i] << superman[i] << paul[i] << endl;
 	}
 
 
@@ -34,7 +34,7 @@ int main() {
 	}
 
 	for (unsigned int i = 0; i < 30; i++) {
-		cout << mattias[i] << victor[i] << superman[i] << paul[i] << endl;;
+		cout << mattias[i] << victor[i] << superman[i] << paul[i] << endl;
 	}
 
 	for (unsigned int i = 0; i < 30; i++) {
