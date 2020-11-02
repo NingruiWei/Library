@@ -349,7 +349,8 @@ int vm_fault(const void* addr, bool write_flag){
         int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)]);
         if(result == -1){
             //file_read was a failure
-            assert(false);
+            //assert(false);
+            return -1;
         }
     }
     else if(!curr_page->in_physmem){
@@ -360,7 +361,8 @@ int vm_fault(const void* addr, bool write_flag){
         int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)]);
         if(result == -1){
             //file_read was a failure
-            assert(false);
+            //assert(false);
+            return -1;
         } 
     }
 
