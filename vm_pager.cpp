@@ -106,19 +106,34 @@ void destroy_clock_page(pager_page_t* destroy_page){
 }
 
 void vm_destroy(){
+
     for(size_t i = processes[curr_pid]->arena_start; i < processes[curr_pid]->arena_valid_end; i += VM_PAGESIZE){
         pager_page_t* curr_page = processes[curr_pid]->page_table->entries[(i-processes[curr_pid]->arena_start)/VM_PAGESIZE];
-        if(curr_page->resident_bit == true){ //If currently resident, remove from physmem and clock
-            phys_index.push_back(curr_page->base->ppage);
-            phys_counter--;
-            destroy_clock_page(curr_page);
+        unsigned int temp_ppage = curr_page->page_table_entries.front().second->ppage;
+        if(!curr_page->swap_backed){ //File backed only removes if the pid matches
+            curr_page->page_table_entries.erase(remove_if(curr_page->page_table_entries.begin(), curr_page->page_table_entries.end(), [curr_page](pair <int, page_table_entry_t*> entry){
+                return entry.first == curr_pid;
+            }));
         }
-        if(curr_page->swap_backed == true){ //Free up swap block for something new in swap space
-            swap_index.push_back(curr_page->block);
-            swap_counter--;
+        else{ //Swap backed should only ever have 1 in its page table entries vector
+            assert(curr_page->page_table_entries.size() == 1);
+            curr_page->page_table_entries.pop_back();
         }
-        delete curr_page; //Delete the page (since it was dynamically allocated)
+
+        if(curr_page->page_table_entries.size() == 0){
+            if(curr_page->resident_bit == true){
+                phys_index.push_back(temp_ppage);
+                phys_counter--;
+                destroy_clock_page(curr_page);
+            }
+            if(curr_page->swap_backed == true){
+                swap_index.push_back(curr_page->block);
+                swap_counter--;
+            }
+            delete curr_page;
+        }
     }
+
     page_table_base_register = nullptr; //No current page table since we're deleting the one we're currently running
     delete processes[curr_pid]->page_table; //Not sure why, but this line doesn't work. We're deleting everything else that's dynamically allocated, but this line causes issues
     delete processes[curr_pid]->infrastructure_page_table; //Delete dynamically allocated memebers of process and dynamically allocated process
