@@ -267,7 +267,7 @@ void *vm_map(const char *filename, unsigned int block){
         else{
             enable_page_protection(temp_page_table_entry);
         }
-        enable_page_protection(temp_page_table_entry);
+        filebacked_map[addition]->page_table_entries.push_back(make_pair(curr_pid, temp_page_table_entry));
 
         //Add page, from filebacked_map, to current process page table
         processes[curr_pid]->arena_valid_end += VM_PAGESIZE;
@@ -326,16 +326,16 @@ int vm_fault(const void* addr, bool write_flag){
     if(write_flag){ //Trying to write to page
         if(curr_page->resident_bit == false){
             clock_insert(curr_page);
-            curr_page->base->ppage = phys_index.front();
+            curr_page->page_table_entries.front().second->ppage = phys_index.front();
             phys_index.pop_front();
             phys_counter++;
 
             if(curr_page->swap_backed == true && curr_page->privacy_bit == false){
-                ((char *)vm_physmem)[curr_page->base->ppage] = ((char *) vm_physmem)[VM_PAGESIZE * buff_index];
+                ((char *)vm_physmem)[curr_page->page_table_entries.front().second->ppage] = ((char *) vm_physmem)[VM_PAGESIZE * buff_index];
                 curr_page->privacy_bit = true;
             }
             else if(curr_page->swap_backed == true && curr_page->privacy_bit == true){
-                int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->base->ppage)]);
+                int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)]);
                 if(result == -1){
                     //file_read was a failure
                     assert(false);
@@ -344,7 +344,7 @@ int vm_fault(const void* addr, bool write_flag){
             else{
                 //File backed write
                 curr_page->privacy_bit = true;
-                int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->base->ppage)]);
+                int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)]);
                 if(result == -1){
                     //file_read was a failure
                     assert(false);
@@ -352,17 +352,9 @@ int vm_fault(const void* addr, bool write_flag){
                 
             }
         }
-        else if(curr_page->swap_backed == false){
-            curr_page->privacy_bit = true;
-            int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->base->ppage)]);
-            if(result == -1){
-                //file_read was a failure
-                assert(false);
-            }
-        }
      
-        curr_page->base->read_enable = true;
-        curr_page->base->write_enable = true;
+        curr_page->page_table_entries.front().second->read_enable = true;
+        curr_page->page_table_entries.front().second->write_enable = true;
         curr_page->dirty_bit = true;
       
     }
@@ -371,16 +363,16 @@ int vm_fault(const void* addr, bool write_flag){
 
         if(curr_page->resident_bit == false){ //Page is not already resident
             clock_insert(curr_page); //Bring page into residency (within clock)
-            curr_page->base->ppage = phys_index.front();
+            curr_page->page_table_entries.front().second->ppage = phys_index.front();
             phys_index.pop_front();
             phys_counter++;
             
             if(curr_page->swap_backed == true && curr_page->privacy_bit == false){ //Swapped back page that original has not been written to
-                ((char *)vm_physmem)[curr_page->base->ppage] = ((char *) vm_physmem)[VM_PAGESIZE * buff_index];
+                ((char *)vm_physmem)[curr_page->page_table_entries.front().second->ppage] = ((char *) vm_physmem)[VM_PAGESIZE * buff_index];
                 curr_page->dirty_bit = false;
             }
             else if (curr_page->swap_backed == true && curr_page->privacy_bit == true){ //Swapped back page that original has had some write to (you read what was newly written to it)
-                int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->base->ppage)]);
+                int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)]);
                 if(result == -1){
                     //file_read was a failure
                     assert(false);
@@ -389,19 +381,11 @@ int vm_fault(const void* addr, bool write_flag){
             }
             else{
                 //File backed read
-                int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->base->ppage)]);
+                int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)]);
                 if(result == -1){
                     assert(false);
                 }
                 curr_page->dirty_bit = false;
-            }
-        }
-        else if(curr_page->swap_backed == false){
-            curr_page->privacy_bit = true;
-            int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->base->ppage)]);
-            if(result == -1){
-                //file_read was a failure
-                assert(false);
             }
         }
      
@@ -412,7 +396,13 @@ int vm_fault(const void* addr, bool write_flag){
         // else{
         //     curr_page->base->write_enable = false;
         // }
-        curr_page->base->read_enable = true;
+        curr_page->page_table_entries.front().second->read_enable = true;
+    }
+
+    for(pair<int, page_table_entry_t*> entry : curr_page->page_table_entries){
+        entry.second->ppage = curr_page->page_table_entries.front().second->ppage;
+        entry.second->read_enable = curr_page->page_table_entries.front().second->read_enable;
+        entry.second->write_enable = curr_page->page_table_entries.front().second->write_enable;
     }
 
     return 0;
