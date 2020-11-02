@@ -191,15 +191,24 @@ void evict(){
 }
 
 void clock_insert(pager_page_t* insert_page){
+
     if(clocker.size() < physmem_size){
         insert_page->reference_bit = true;
         insert_page->resident_bit = true;
+        insert_page->page_table_entries.front().second->ppage = phys_index.front();
+        phys_index.pop_front();
+        phys_counter++;
+
         clocker.push_back(insert_page); //Push back is inserting the element and then moving the hand one place forward
     }
     else{
         evict();
+        
         insert_page->reference_bit = true;
         insert_page->resident_bit = true;
+        insert_page->page_table_entries.front().second->ppage = phys_index.front();
+        phys_index.pop_front();
+        phys_counter++;
         clocker.push_back(insert_page);
     }
 }
@@ -274,6 +283,8 @@ void *vm_map(const char *filename, unsigned int block){
         processes[curr_pid]->page_table->entries[first_invalid_page] = filebacked_map[addition];
         processes[curr_pid]->infrastructure_page_table->ptes[first_invalid_page] = *temp_page_table_entry;
 
+        //processes[curr_pid]->page_table->entries[ ((uintptr_t) addr - processes[curr_pid]->arena_start) / VM_PAGESIZE]
+        clock_insert(processes[curr_pid]->page_table->entries[first_invalid_page]); // adding it to 
         return  (void *) (processes[curr_pid]->arena_valid_end - VM_PAGESIZE);
 
     }
@@ -305,6 +316,7 @@ void *vm_map(const char *filename, unsigned int block){
             processes[curr_pid]->infrastructure_page_table->ptes[first_invalid_page] = *temp_page_table_entry;
 
             swap_counter++;
+            clock_insert(processes[curr_pid]->page_table->entries[first_invalid_page]);
             return  (void *) (processes[curr_pid]->arena_valid_end - VM_PAGESIZE);
         }
         else{
@@ -326,10 +338,6 @@ int vm_fault(const void* addr, bool write_flag){
     if(write_flag){ //Trying to write to page
         if(curr_page->resident_bit == false){
             clock_insert(curr_page);
-            curr_page->page_table_entries.front().second->ppage = phys_index.front();
-            phys_index.pop_front();
-            phys_counter++;
-
             if(curr_page->swap_backed == true && curr_page->privacy_bit == false){
                 ((char *)vm_physmem)[curr_page->page_table_entries.front().second->ppage] = ((char *) vm_physmem)[VM_PAGESIZE * buff_index];
                 curr_page->privacy_bit = true;
@@ -359,7 +367,6 @@ int vm_fault(const void* addr, bool write_flag){
       
     }
     else{ //Trying to read page
-
 
         if(curr_page->resident_bit == false){ //Page is not already resident
             clock_insert(curr_page); //Bring page into residency (within clock)
