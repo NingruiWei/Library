@@ -19,6 +19,7 @@ struct pager_page_t{
     unsigned int block = 0;
     bool swap_backed = false;
     bool pinned = false;
+    bool in_physmem = false;
 };
 
 struct pager_page_table_t {
@@ -163,6 +164,7 @@ void evict_page(pager_page_t* reset_page){
     reset_page->dirty_bit = false;
     reset_page->reference_bit = false;
     reset_page->privacy_bit = false;
+    reset_page->in_physmem = false;
 }
 
 void evict(){
@@ -191,26 +193,23 @@ void evict(){
 }
 
 void clock_insert(pager_page_t* insert_page){
-
-    if(clocker.size() < physmem_size){
-        insert_page->reference_bit = true;
-        insert_page->resident_bit = true;
-        insert_page->page_table_entries.front().second->ppage = phys_index.front();
-        phys_index.pop_front();
-        phys_counter++;
-
-        clocker.push_back(insert_page); //Push back is inserting the element and then moving the hand one place forward
-    }
-    else{
+    if(clocker.size() >= physmem_size){
         evict();
-        
-        insert_page->reference_bit = true;
-        insert_page->resident_bit = true;
-        insert_page->page_table_entries.front().second->ppage = phys_index.front();
-        phys_index.pop_front();
-        phys_counter++;
-        clocker.push_back(insert_page);
     }
+
+    insert_page->reference_bit = true;
+    insert_page->resident_bit = true;
+    insert_page->page_table_entries.front().second->ppage = phys_index.front();
+    phys_index.pop_front();
+    phys_counter++;
+
+    for(pair<int, page_table_entry_t*> entry : insert_page->page_table_entries){
+        entry.second->ppage = insert_page->page_table_entries.front().second->ppage;
+        entry.second->read_enable = insert_page->page_table_entries.front().second->read_enable;
+        entry.second->write_enable = insert_page->page_table_entries.front().second->write_enable;
+    }
+
+    clocker.push_back(insert_page); //Push back is inserting the element and then moving the hand one place forward
 }
 
 bool invalid_filename_address(const char *filename) {
@@ -227,6 +226,7 @@ pager_page_t* new_pager_page(const char* filename, unsigned int block){
     return_pager_page->dirty_bit = false;
     return_pager_page->reference_bit = false;
     return_pager_page->pinned = false;
+    return_pager_page->in_physmem = false;
 
     return return_pager_page;
 }
@@ -334,75 +334,44 @@ int vm_fault(const void* addr, bool write_flag){
    
     pager_page_t* curr_page = processes[curr_pid]->page_table->entries[ ((uintptr_t) addr - processes[curr_pid]->arena_start) / VM_PAGESIZE]; //Page address is trying to access
     curr_page->reference_bit = true;
-   
-    if(write_flag){ //Trying to write to page
-        if(curr_page->resident_bit == false){
-            clock_insert(curr_page);
-            if(curr_page->swap_backed == true && curr_page->privacy_bit == false){
-                ((char *)vm_physmem)[curr_page->page_table_entries.front().second->ppage] = ((char *) vm_physmem)[VM_PAGESIZE * buff_index];
-                curr_page->privacy_bit = true;
-            }
-            else if(curr_page->swap_backed == true && curr_page->privacy_bit == true){
-                int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)]);
-                if(result == -1){
-                    //file_read was a failure
-                    assert(false);
-                }
-            }
-            else{
-                //File backed write
-                curr_page->privacy_bit = true;
-                int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)]);
-                if(result == -1){
-                    //file_read was a failure
-                    assert(false);
-                }
-                
-            }
+
+    if(curr_page->resident_bit == false){
+        clock_insert(curr_page);
+    }
+    
+    if(curr_page->swap_backed == true && curr_page->privacy_bit == false && !curr_page->in_physmem){
+        ((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)] = ((char *) vm_physmem)[VM_PAGESIZE * buff_index];
+        if(write_flag == true){
+            curr_page->privacy_bit = true;
         }
-     
+    }
+    else if(curr_page->swap_backed == true && curr_page->privacy_bit == true && !curr_page->in_physmem){
+        int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)]);
+        if(result == -1){
+            //file_read was a failure
+            assert(false);
+        }
+    }
+    else if(!curr_page->in_physmem){
+        //File backed
+        if(write_flag == true){
+            curr_page->privacy_bit = true;
+        }
+        int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)]);
+        if(result == -1){
+            //file_read was a failure
+            assert(false);
+        } 
+    }
+
+    curr_page->in_physmem = true;
+    if(write_flag){
         curr_page->page_table_entries.front().second->read_enable = true;
         curr_page->page_table_entries.front().second->write_enable = true;
         curr_page->dirty_bit = true;
-      
     }
-    else{ //Trying to read page
-
-        if(curr_page->resident_bit == false){ //Page is not already resident
-            clock_insert(curr_page); //Bring page into residency (within clock)
-            curr_page->page_table_entries.front().second->ppage = phys_index.front();
-            phys_index.pop_front();
-            phys_counter++;
-            
-            if(curr_page->swap_backed == true && curr_page->privacy_bit == false){ //Swapped back page that original has not been written to
-                ((char *)vm_physmem)[curr_page->page_table_entries.front().second->ppage] = ((char *) vm_physmem)[VM_PAGESIZE * buff_index];
-                curr_page->dirty_bit = false;
-            }
-            else if (curr_page->swap_backed == true && curr_page->privacy_bit == true){ //Swapped back page that original has had some write to (you read what was newly written to it)
-                int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)]);
-                if(result == -1){
-                    //file_read was a failure
-                    assert(false);
-                }
-                curr_page->dirty_bit = false;
-            }
-            else{
-                //File backed read
-                int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)]);
-                if(result == -1){
-                    assert(false);
-                }
-                curr_page->dirty_bit = false;
-            }
-        }
-     
-        
-        // if(curr_page->dirty_bit == true){
-        //     curr_page->base->write_enable = true;
-        // }
-        // else{
-        //     curr_page->base->write_enable = false;
-        // }
+    else{
+        curr_page->dirty_bit = false;
         curr_page->page_table_entries.front().second->read_enable = true;
     }
 
