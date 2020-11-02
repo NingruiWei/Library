@@ -231,23 +231,23 @@ void *vm_map(const char *filename, unsigned int block){
         }
         char * copy_str = new char[filename_offset];
         filename_str.copy(copy_str, filename_offset);
-
+        string addition(copy_str);
         int first_invalid_page = arena_valid_page_size();
-        filename_str += to_string(block);
-        if(filebacked_map.find(filename_str) == filebacked_map.end()){
+        addition += '-' + to_string(block);
+        if(filebacked_map.find(addition) == filebacked_map.end()){
             //create new page to add to fileback map
 
             pager_page_t* temp_page = new_pager_page(copy_str, block);
             temp_page->base = &(page_table_base_register->ptes[first_invalid_page]);
             enable_page_protection(temp_page);
 
-            filebacked_map[filename_str] = temp_page;
+            filebacked_map[addition] = temp_page;
         }
 
         //Add page, from filebacked_map, to current process page table
         processes[curr_pid]->arena_valid_end += VM_PAGESIZE;
-        processes[curr_pid]->page_table->entries[first_invalid_page] = filebacked_map[filename_str];
-        processes[curr_pid]->infrastructure_page_table->ptes[first_invalid_page] = *filebacked_map[filename_str]->base;
+        processes[curr_pid]->page_table->entries[first_invalid_page] = filebacked_map[addition];
+        processes[curr_pid]->infrastructure_page_table->ptes[first_invalid_page] = *filebacked_map[addition]->base;
 
         return  (void *) (processes[curr_pid]->arena_valid_end - VM_PAGESIZE);
 
@@ -298,11 +298,11 @@ int vm_fault(const void* addr, bool write_flag){
             phys_counter++;
 
             if(curr_page->swap_backed == true && curr_page->privacy_bit == false){
-                ((char *)vm_physmem)[curr_page->base->ppage] = ((char *) vm_physmem)[buff_index];
+                ((char *)vm_physmem)[curr_page->base->ppage] = ((char *) vm_physmem)[VM_PAGESIZE * buff_index];
                 curr_page->privacy_bit = true;
             }
             else if(curr_page->swap_backed == true && curr_page->privacy_bit == true){
-                int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[curr_page->base->ppage]);
+                int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->base->ppage)]);
                 if(result == -1){
                     //file_read was a failure
                     assert(false);
@@ -311,6 +311,12 @@ int vm_fault(const void* addr, bool write_flag){
             else{
                 //File backed write
                 curr_page->privacy_bit = true;
+                int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->base->ppage)]);
+                if(result == -1){
+                    //file_read was a failure
+                    assert(false);
+                }
+                
             }
         }
      
@@ -329,11 +335,11 @@ int vm_fault(const void* addr, bool write_flag){
             phys_counter++;
             
             if(curr_page->swap_backed == true && curr_page->privacy_bit == false){ //Swapped back page that original has not been written to
-                ((char *)vm_physmem)[curr_page->base->ppage] = ((char *) vm_physmem)[buff_index];
+                ((char *)vm_physmem)[curr_page->base->ppage] = ((char *) vm_physmem)[VM_PAGESIZE * buff_index];
                 curr_page->dirty_bit = false;
             }
             else if (curr_page->swap_backed == true && curr_page->privacy_bit == true){ //Swapped back page that original has had some write to (you read what was newly written to it)
-                int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[curr_page->base->ppage]);
+                int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->base->ppage)]);
                 if(result == -1){
                     //file_read was a failure
                     assert(false);
@@ -342,7 +348,11 @@ int vm_fault(const void* addr, bool write_flag){
             }
             else{
                 //File backed read
-                curr_page->privacy_bit = true;
+                int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->base->ppage)]);
+                if(result == -1){
+                    assert(false);
+                }
+                curr_page->dirty_bit = false;
             }
         }
         
