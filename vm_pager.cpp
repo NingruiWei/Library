@@ -35,6 +35,8 @@ struct process{
     uintptr_t arena_valid_end = uintptr_t(VM_ARENA_BASEADDR);
 };
 
+pager_page_t* zero;
+
 deque<pager_page_t*> clocker;
 deque<unsigned int> phys_index;
 deque<unsigned int> swap_index;
@@ -59,7 +61,7 @@ void vm_init(unsigned int memory_pages, unsigned int swap_blocks){
     //char *buff = new char[VM_PAGESIZE];
     memset (vm_physmem, 0, VM_PAGESIZE);
     //((char*)vm_physmem)[buff_index] = *buff;
-    pager_page_t* zero = new pager_page_t;
+    zero = new pager_page_t;
     zero->resident_bit = true;
     zero->pinned = true;
     page_table_entry_t * zero_entry = new page_table_entry_t;
@@ -300,6 +302,7 @@ void *vm_map(const char *filename, unsigned int block){
             pager_page_t* temp_page = new_pager_page(filename, block);
 
             page_table_entry_t* temp_page_table_entry = &(page_table_base_register->ptes[first_invalid_page]);
+            //memcpy(&((char *)vm_physmem)[VM_PAGESIZE * zero->page_table_entries.front().second->ppage], &((char *) vm_physmem)[VM_PAGESIZE * buff_index], VM_PAGESIZE);
             if(!temp_page->page_table_entries.empty()){
                 temp_page_table_entry->ppage = temp_page->page_table_entries.front().second->ppage;
                 temp_page_table_entry->read_enable = temp_page->page_table_entries.front().second->read_enable;
@@ -320,7 +323,8 @@ void *vm_map(const char *filename, unsigned int block){
             processes[curr_pid]->infrastructure_page_table->ptes[first_invalid_page] = *temp_page_table_entry;
 
             swap_counter++;
-            clock_insert(processes[curr_pid]->page_table->entries[first_invalid_page]);
+            temp_page_table_entry = zero->page_table_entries.front().second;
+            //clock_insert(processes[curr_pid]->page_table->entries[first_invalid_page]);
             return  (void *) (processes[curr_pid]->arena_valid_end - VM_PAGESIZE);
         }
         else{
