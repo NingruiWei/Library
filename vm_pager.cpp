@@ -56,12 +56,15 @@ void vm_init(unsigned int memory_pages, unsigned int swap_blocks){
     for(size_t i = 0; i < swap_size; i++){
         swap_index.push_back(i);
     }
-    char *buff = new char[VM_PAGESIZE];
-    memset (buff, 0, VM_PAGESIZE);
-    ((char*)vm_physmem)[buff_index] = *buff;
+    //char *buff = new char[VM_PAGESIZE];
+    memset (vm_physmem, 0, VM_PAGESIZE);
+    //((char*)vm_physmem)[buff_index] = *buff;
     pager_page_t* zero = new pager_page_t;
     zero->resident_bit = true;
     zero->pinned = true;
+    page_table_entry_t * zero_entry = new page_table_entry_t;
+    zero_entry->ppage = 0;
+    zero->page_table_entries.push_back(make_pair(curr_pid, zero_entry));
     clocker.push_back(zero);
 }
 
@@ -199,6 +202,7 @@ void clock_insert(pager_page_t* insert_page){
 
     insert_page->reference_bit = true;
     insert_page->resident_bit = true;
+    // we might need to do the memcpy stuff here after bringing the page into resident (bring into physical mem)
     insert_page->page_table_entries.front().second->ppage = phys_index.front();
     phys_index.pop_front();
     phys_counter++;
@@ -340,19 +344,20 @@ int vm_fault(const void* addr, bool write_flag){
     }
     
     if(curr_page->swap_backed == true && curr_page->privacy_bit == false && !curr_page->in_physmem){
-        ((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)] = ((char *) vm_physmem)[VM_PAGESIZE * buff_index];
+        memcpy(&((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)], &((char *) vm_physmem)[VM_PAGESIZE * buff_index], VM_PAGESIZE);
+        //((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)] = ((char *) vm_physmem)[VM_PAGESIZE * buff_index];
         if(write_flag == true){
             curr_page->privacy_bit = true;
         }
     }
-    else if(curr_page->swap_backed == true && curr_page->privacy_bit == true && !curr_page->in_physmem){
-        int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)]);
-        if(result == -1){
-            //file_read was a failure
-            //assert(false);
-            return -1;
-        }
-    }
+    // else if(curr_page->swap_backed == true && curr_page->privacy_bit == true && !curr_page->in_physmem){
+    //     int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)]);
+    //     if(result == -1){
+    //         //file_read was a failure
+    //         //assert(false);
+    //         return -1;
+    //     }
+    // }
     else if(!curr_page->in_physmem){
         //File backed
         if(write_flag == true){

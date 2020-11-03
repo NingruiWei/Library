@@ -17,28 +17,33 @@ int main()
 
     /* Map a page from the specified file */
     char *paul = (char *) vm_map (filename, 0);
-    /* Print the first speech from the file */
-    for (unsigned int i=0; i<1000; i++) {
-	    cout << paul[i];
-    }
-    cout << endl;
 
-    char *ningrui = (char *) vm_map (filename, 10);
-    for (unsigned int i=0; i<1000; i++) {
-	    cout << ningrui[i];
+    if (fork() == 0) {
+        cout << "FIRST CHILD" << endl;
+        strcpy(paul, "data1.bin");
+        for (unsigned int i=0; i<100; i++) {
+            cout << paul[i];
+        }
     }
-    cout << endl;
+    else {
+        cout << "INSIDE ELSE" << endl;
+        if (fork() == 0) {
+            cout << "SECOND CHILD" << endl;
+            strcpy(paul, "data2.bin");
+            for (unsigned int i=0; i<100; i++) {
+                cout << paul[i];
+            }
+        }
+        else {
+            cout << "SHAKE AND BAKE" << endl;
+            strcpy(paul, "shakespeare.txt");
+            for (unsigned int i=0; i<100; i++) {
+                cout << paul[i];
+            }
+        }
+    }
 
-    strcpy(paul, "shakespeare.txt");
-    for (unsigned int i=0; i<1000; i++) {
-        cout << paul[i];
-    }
-    cout << endl;
+    cout << "end" << endl;
 
-    ningrui = (char *) vm_map(nullptr, 0);
-    for (unsigned int i=0; i<1000; i++) {
-	    cout << ningrui[i];
-    }
-    cout << endl;
     
 }
