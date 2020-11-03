@@ -168,7 +168,7 @@ void evict_page(pager_page_t* reset_page){
     reset_page->resident_bit = false;
     reset_page->dirty_bit = false;
     reset_page->reference_bit = false;
-    reset_page->privacy_bit = false;
+    //reset_page->privacy_bit = false;
     reset_page->in_physmem = false;
 }
 
@@ -341,21 +341,21 @@ int vm_fault(const void* addr, bool write_flag){
     }
     
     if(curr_page->swap_backed == true && curr_page->privacy_bit == false && !curr_page->in_physmem){
-        //memcpy(&((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)], &((char *) vm_physmem)[VM_PAGESIZE * buff_index], VM_PAGESIZE);
-        file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)]);
+        memcpy(&((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)], &((char *) vm_physmem)[VM_PAGESIZE * buff_index], VM_PAGESIZE);
+        //file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)]);
         //((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)] = ((char *) vm_physmem)[VM_PAGESIZE * buff_index];
         if(write_flag == true){
             curr_page->privacy_bit = true;
         }
     }
-    // else if(curr_page->swap_backed == true && curr_page->privacy_bit == true && !curr_page->in_physmem){
-    //     int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)]);
-    //     if(result == -1){
-    //         //file_read was a failure
-    //         //assert(false);
-    //         return -1;
-    //     }
-    // }
+    else if(curr_page->swap_backed == true && curr_page->privacy_bit == true && !curr_page->in_physmem){
+        int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)]);
+        if(result == -1){
+            //file_read was a failure
+            //assert(false);
+            return -1;
+        }
+    }
     else if(!curr_page->in_physmem){
         //File backed
         if(write_flag == true){
