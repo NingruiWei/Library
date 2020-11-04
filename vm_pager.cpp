@@ -171,28 +171,39 @@ void evict_page(pager_page_t* reset_page){
     reset_page->resident_bit = false;
     reset_page->dirty_bit = false;
     reset_page->reference_bit = false;
-    //reset_page->privacy_bit = false;
+    //reset_page->privacy_bit = false; //Privacy bit will tell us if swap-backed has ever been written back to before, meaning we can't just access a zero page for it
     reset_page->in_physmem = false;
 }
 
 void evict(){
-    while(1){
-        if(clocker.front()->reference_bit == true || clocker.front()->pinned == true){ //Clock hand pointing at "1"
+    while(1){ 
+        if(clocker.front()->reference_bit == true || clocker.front()->pinned == true){ //Clock hand pointing at page with reference of "1"
             clocker.front()->reference_bit = false;
+            clocker.front()->page_table_entries.front().second->read_enable = false; //Lose privelages when you lose your reference
+            clocker.front()->page_table_entries.front().second->write_enable = false;
+            
+            for(pair<int, page_table_entry_t*> entry : clocker.front()->page_table_entries){ //Echo loss of reference status to all page table entries managed together (for file-backed)
+                entry.second->ppage = clocker.front()->page_table_entries.front().second->ppage;
+                entry.second->read_enable = clocker.front()->page_table_entries.front().second->read_enable;
+                entry.second->write_enable = clocker.front()->page_table_entries.front().second->write_enable;
+            }
+
             clocker.push_back(clocker.front());
             clocker.pop_front();
         }
-        else{                                       //Clock hand pointing at "0"
-            /*
-                Some kind of check for dirty and privacy bit
-                should call file_write to write the information back to the correct file
-            */
+        else{  //Clock hand pointing at page with reference of "0"
             if(clocker.front()->dirty_bit == true && clocker.front()->privacy_bit == true){
                file_write(clocker.front()->filename, clocker.front()->block, &((char *)vm_physmem)[VM_PAGESIZE * clocker.front()->page_table_entries.front().second->ppage]);
             }
             phys_index.push_back(clocker.front()->page_table_entries.front().second->ppage);
             phys_counter--;
             evict_page(clocker.front());
+
+            for(pair<int, page_table_entry_t*> entry : clocker.front()->page_table_entries){ //Echo evicition to all page table entries managed together (mostly for file-backed that have the same filename and block)
+                entry.second->ppage = clocker.front()->page_table_entries.front().second->ppage;
+                entry.second->read_enable = clocker.front()->page_table_entries.front().second->read_enable;
+                entry.second->write_enable = clocker.front()->page_table_entries.front().second->write_enable;
+            }
             
             clocker.pop_front();
             return;
