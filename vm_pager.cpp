@@ -290,7 +290,7 @@ void *vm_map(const char *filename, unsigned int block){
         processes[curr_pid]->infrastructure_page_table->ptes[first_invalid_page] = *temp_page_table_entry;
 
         //processes[curr_pid]->page_table->entries[ ((uintptr_t) addr - processes[curr_pid]->arena_start) / VM_PAGESIZE]
-        clock_insert(processes[curr_pid]->page_table->entries[first_invalid_page]); // adding it to 
+        //clock_insert(processes[curr_pid]->page_table->entries[first_invalid_page]); // adding it to 
         return  (void *) (processes[curr_pid]->arena_valid_end - VM_PAGESIZE);
 
     }
