@@ -33,6 +33,7 @@ struct process{
     pid_t process_id;
     uintptr_t arena_start = uintptr_t(VM_ARENA_BASEADDR);
     uintptr_t arena_valid_end = uintptr_t(VM_ARENA_BASEADDR);
+    int num_swap_pages = 0;
 };
 
 pager_page_t* zero;
@@ -72,11 +73,74 @@ void vm_init(unsigned int memory_pages, unsigned int swap_blocks){
 
 int vm_create(pid_t parent_pid, pid_t child_pid){
     if(processes.find(parent_pid) != processes.end()){ // 498 part
-        assert(false);
+        process* parent_process = processes[parent_pid];
+        process* child_process = new process;
+
+        for(int i = 0; i < sizeof(parent_process->page_table->entries) / sizeof(parent_process->page_table->entries)[0]; i++){
+            pager_page_t* curr_child_entry = child_process->page_table->entries[i];
+            pager_page_t* curr_parent_entry = parent_process->page_table->entries[i];
+
+            if(curr_parent_entry->swap_backed == true){ //Swapbacked page (THIS IS WHERE THE WORKED IS NEEDED)
+                if(swap_counter + 1 >= swap_size){ //No space for eager swap reservation
+                    return -1;
+                }
+                assert(!swap_index.empty()); //Double check that we still have swap space left
+
+                child_process->num_swap_pages++;
+                curr_child_entry->block = swap_index.front();
+                swap_index.pop_front();
+                swap_counter++;
+
+                page_table_entry_t* temp_page = &child_process->infrastructure_page_table->ptes[i];
+                if(!curr_parent_entry->page_table_entries.empty()){
+                    temp_page->ppage = curr_parent_entry->page_table_entries.front().second->ppage;
+                    temp_page->read_enable = curr_parent_entry->page_table_entries.front().second->read_enable;
+                    temp_page->write_enable = curr_parent_entry->page_table_entries.front().second->write_enable;
+                }
+                if(curr_parent_entry->pinned){
+                    temp_page->ppage = 0;
+                    temp_page->read_enable = true;
+                    temp_page->write_enable = false;
+                }
+
+
+                //Deep copy everything but the block
+                curr_child_entry->dirty_bit = curr_parent_entry->dirty_bit;
+                curr_child_entry->filename = curr_parent_entry->filename;
+                curr_child_entry->in_physmem = curr_parent_entry->in_physmem;
+                curr_child_entry->page_table_entries = curr_parent_entry->page_table_entries;
+                curr_child_entry->pinned = curr_parent_entry->pinned;
+                curr_child_entry->privacy_bit = curr_parent_entry->privacy_bit;
+                curr_child_entry->reference_bit = curr_parent_entry->reference_bit;
+                curr_child_entry->resident_bit = curr_parent_entry->resident_bit;
+                curr_child_entry->swap_backed = curr_parent_entry->swap_backed;
+            }
+            else{ //Filebacked page
+                page_table_entry_t* temp_page = &child_process->infrastructure_page_table->ptes[i];
+                if(!curr_parent_entry->page_table_entries.empty()){
+                    temp_page->ppage = curr_parent_entry->page_table_entries.front().second->ppage;
+                    temp_page->read_enable = curr_parent_entry->page_table_entries.front().second->read_enable;
+                    temp_page->write_enable = curr_parent_entry->page_table_entries.front().second->write_enable;
+                }
+                if(curr_parent_entry->pinned){
+                    temp_page->ppage = 0;
+                    temp_page->read_enable = true;
+                    temp_page->write_enable = false;
+                }
+
+                curr_parent_entry->page_table_entries.push_back(make_pair(child_pid, temp_page));
+                curr_child_entry = curr_parent_entry;
+
+            }
+
+        }
+
+        child_process->arena_valid_end = parent_process->arena_valid_end;
+        assert(child_process->num_swap_pages == parent_process->num_swap_pages);
+
+        processes[child_pid] = child_process;
+
         return 0;
-
-
-
     }
     else{
         process* temp_process = new process;
@@ -330,6 +394,7 @@ void *vm_map(const char *filename, unsigned int block){
             processes[curr_pid]->arena_valid_end += VM_PAGESIZE;
             processes[curr_pid]->page_table->entries[first_invalid_page] = temp_page;
             processes[curr_pid]->infrastructure_page_table->ptes[first_invalid_page] = *temp_page_table_entry;
+            processes[curr_pid]->num_swap_pages++;
 
             swap_counter++;
             return  (void *) (processes[curr_pid]->arena_valid_end - VM_PAGESIZE);
