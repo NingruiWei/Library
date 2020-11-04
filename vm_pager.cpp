@@ -117,6 +117,9 @@ void vm_destroy(){
         pager_page_t* curr_page = processes[curr_pid]->page_table->entries[(i-processes[curr_pid]->arena_start)/VM_PAGESIZE];
         unsigned int temp_ppage = curr_page->page_table_entries.front().second->ppage;
         if(!curr_page->swap_backed){ //File backed only removes if the pid matches
+            if(curr_page->page_table_entries.size() == 1 && curr_page->dirty_bit == true && curr_page->privacy_bit == true){ //Last thing pointing to that file and block, write back its content if dirty
+                file_write(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * curr_page->page_table_entries.front().second->ppage]);
+            }
             curr_page->page_table_entries.erase(remove_if(curr_page->page_table_entries.begin(), curr_page->page_table_entries.end(), [curr_page](pair <int, page_table_entry_t*> entry){
                 return entry.first == curr_pid;
             }));
