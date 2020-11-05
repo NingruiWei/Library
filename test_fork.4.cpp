@@ -61,6 +61,7 @@ int main(){
     char* file_6 = (char*) vm_map(nullptr, 0);
 
     fork();
+    vm_yield();
 
     char* file_7 = (char*) vm_map(nullptr, 0);
 
