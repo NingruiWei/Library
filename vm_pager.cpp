@@ -158,7 +158,7 @@ void destroy_clock_page(pager_page_t* destroy_page){
 }
 
 void vm_destroy(){
-
+    page_table_base_register = nullptr; //No current page table since we're deleting the one we're currently running
     for(size_t i = processes[curr_pid]->arena_start; i < processes[curr_pid]->arena_valid_end; i += VM_PAGESIZE){
         pager_page_t* curr_page = processes[curr_pid]->page_table->entries[(i-processes[curr_pid]->arena_start)/VM_PAGESIZE];
         unsigned int temp_ppage = curr_page->page_table_entries.front().second->ppage;
@@ -179,16 +179,16 @@ void vm_destroy(){
                 NEED SOME WAY TO FREE UP COPY ON WRITE SWAP BACKED PAGES in the case they were never written to to separate them
                 This is a TEMPORARY solution, but we may need to rethink it
             */
-        //    if(curr_page->page_table_entries.size() > 1){ //Swap backed page with something that had a reserved copy-on-write swap block, but never wrote (so did not copy)
-        //         curr_page->page_table_entries.erase(remove_if(curr_page->page_table_entries.begin(), curr_page->page_table_entries.end(), [curr_page](pair <int, page_table_entry_t*> entry){
-        //             return entry.first == curr_pid;
-        //         }));
-        //         swap_index.push_back(reserved_swap_index.front());
-        //         reserved_swap_index.pop_front();
-        //     }
-            //else{ //Swap backed with nothing reserved for copy-on-write
+           if(curr_page->page_table_entries.size() > 1){ //Swap backed page with something that had a reserved copy-on-write swap block, but never wrote (so did not copy)
+                curr_page->page_table_entries.erase(remove_if(curr_page->page_table_entries.begin(), curr_page->page_table_entries.end(), [curr_page](pair <int, page_table_entry_t*> entry){
+                    return entry.first == curr_pid;
+                }));
+                swap_index.push_back(reserved_swap_index.front());
+                reserved_swap_index.pop_front();
+            }
+            else{ //Swap backed with nothing reserved for copy-on-write
                 curr_page->page_table_entries.pop_back();
-            //}
+            }
         }
 
         if(curr_page->page_table_entries.size() == 0){
@@ -205,7 +205,7 @@ void vm_destroy(){
         }
     }
 
-    page_table_base_register = nullptr; //No current page table since we're deleting the one we're currently running
+    
     delete processes[curr_pid]->page_table; //Not sure why, but this line doesn't work. We're deleting everything else that's dynamically allocated, but this line causes issues
     delete processes[curr_pid]->infrastructure_page_table; //Delete dynamically allocated memebers of process and dynamically allocated process
 

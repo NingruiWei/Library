@@ -24,6 +24,7 @@ int main()
         for (unsigned int i=0; i<100; i++) {
             cout << paul[i];
         }
+        cout << endl;
     }
     else {
         cout << "INSIDE ELSE" << endl;
@@ -33,6 +34,7 @@ int main()
             for (unsigned int i=0; i<100; i++) {
                 cout << paul[i];
             }
+            cout << endl;
         }
         else {
             cout << "SHAKE AND BAKE" << endl;
@@ -40,6 +42,7 @@ int main()
             for (unsigned int i=0; i<100; i++) {
                 cout << paul[i];
             }
+            cout << endl;
         }
     }
 
