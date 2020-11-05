@@ -3,3 +3,4 @@ test0.4.cpp
 test1.4.cpp
 test2.1024.cpp
 test3.4.cpp
+test_noncontiguous_memory.4.cpp
