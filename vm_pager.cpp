@@ -41,6 +41,7 @@ pager_page_t* zero;
 deque<pager_page_t*> clocker;
 deque<unsigned int> phys_index;
 deque<unsigned int> swap_index;
+deque<unsigned int> reserved_swap_index; //swap indices that are currently reserved for copy-on-write swap backed pages
 unordered_map<pid_t, process*> processes;
 unordered_map<string, pager_page_t*> filebacked_map;
 int curr_pid = -1;
@@ -75,11 +76,15 @@ int vm_create(pid_t parent_pid, pid_t child_pid){
     if(processes.find(parent_pid) != processes.end()){ // 498 part
         process* parent_process = processes[parent_pid];
         process* child_process = new process;
+        child_process->process_id = child_pid;
+        child_process->infrastructure_page_table = new page_table_t;
+        child_process->page_table = new pager_page_table_t;
 
-        for(int i = 0; i < sizeof(parent_process->page_table->entries) / sizeof(parent_process->page_table->entries)[0]; i++){
-            pager_page_t* curr_child_entry = child_process->page_table->entries[i];
+        for(size_t i = 0; i < sizeof(parent_process->page_table->entries) / sizeof(parent_process->page_table->entries)[0]; i++){
             pager_page_t* curr_parent_entry = parent_process->page_table->entries[i];
-
+            if(!curr_parent_entry){
+                break;
+            }
             if(curr_parent_entry->swap_backed == true){ //Swapbacked page (THIS IS WHERE THE WORKED IS NEEDED)
                 if(swap_counter + 1 >= swap_size){ //No space for eager swap reservation
                     return -1;
@@ -87,56 +92,33 @@ int vm_create(pid_t parent_pid, pid_t child_pid){
                 assert(!swap_index.empty()); //Double check that we still have swap space left
 
                 child_process->num_swap_pages++;
-                curr_child_entry->block = swap_index.front();
+                reserved_swap_index.push_back(swap_index.front()); //reserve swap index for potential copy-on-write
                 swap_index.pop_front();
                 swap_counter++;
-
-                page_table_entry_t* temp_page = &child_process->infrastructure_page_table->ptes[i];
-                if(!curr_parent_entry->page_table_entries.empty()){
-                    temp_page->ppage = curr_parent_entry->page_table_entries.front().second->ppage;
-                    temp_page->read_enable = curr_parent_entry->page_table_entries.front().second->read_enable;
-                    temp_page->write_enable = curr_parent_entry->page_table_entries.front().second->write_enable;
-                }
-                if(curr_parent_entry->pinned){
-                    temp_page->ppage = 0;
-                    temp_page->read_enable = true;
-                    temp_page->write_enable = false;
-                }
-
-
-                //Deep copy everything but the block
-                curr_child_entry->dirty_bit = curr_parent_entry->dirty_bit;
-                curr_child_entry->filename = curr_parent_entry->filename;
-                curr_child_entry->in_physmem = curr_parent_entry->in_physmem;
-                curr_child_entry->page_table_entries = curr_parent_entry->page_table_entries;
-                curr_child_entry->pinned = curr_parent_entry->pinned;
-                curr_child_entry->privacy_bit = curr_parent_entry->privacy_bit;
-                curr_child_entry->reference_bit = curr_parent_entry->reference_bit;
-                curr_child_entry->resident_bit = curr_parent_entry->resident_bit;
-                curr_child_entry->swap_backed = curr_parent_entry->swap_backed;
-            }
-            else{ //Filebacked page
-                page_table_entry_t* temp_page = &child_process->infrastructure_page_table->ptes[i];
-                if(!curr_parent_entry->page_table_entries.empty()){
-                    temp_page->ppage = curr_parent_entry->page_table_entries.front().second->ppage;
-                    temp_page->read_enable = curr_parent_entry->page_table_entries.front().second->read_enable;
-                    temp_page->write_enable = curr_parent_entry->page_table_entries.front().second->write_enable;
-                }
-                if(curr_parent_entry->pinned){
-                    temp_page->ppage = 0;
-                    temp_page->read_enable = true;
-                    temp_page->write_enable = false;
-                }
-
-                curr_parent_entry->page_table_entries.push_back(make_pair(child_pid, temp_page));
-                curr_child_entry = curr_parent_entry;
-
             }
 
+            page_table_entry_t* temp_page = &child_process->infrastructure_page_table->ptes[i];
+            if(!curr_parent_entry->page_table_entries.empty()){
+                temp_page->ppage = curr_parent_entry->page_table_entries.front().second->ppage;
+                temp_page->read_enable = curr_parent_entry->page_table_entries.front().second->read_enable;
+                temp_page->write_enable = curr_parent_entry->page_table_entries.front().second->write_enable;
+            }
+            if(curr_parent_entry->pinned){
+                temp_page->ppage = 0;
+                temp_page->read_enable = true;
+                temp_page->write_enable = false;
+            }
+
+            curr_parent_entry->page_table_entries.push_back(make_pair(child_pid, temp_page));
+            child_process->page_table->entries[i] = curr_parent_entry;
+
+            for(pair<pid_t, page_table_entry_t*> entry : curr_parent_entry->page_table_entries){
+                entry.second->write_enable = false; //Guarantee write is false so that we can copy on write if necessary
+            }
         }
 
         child_process->arena_valid_end = parent_process->arena_valid_end;
-        assert(child_process->num_swap_pages == parent_process->num_swap_pages);
+        assert(child_process->num_swap_pages == parent_process->num_swap_pages); //Parent and child should have the same number of swap pages
 
         processes[child_pid] = child_process;
 
@@ -181,16 +163,32 @@ void vm_destroy(){
         pager_page_t* curr_page = processes[curr_pid]->page_table->entries[(i-processes[curr_pid]->arena_start)/VM_PAGESIZE];
         unsigned int temp_ppage = curr_page->page_table_entries.front().second->ppage;
         if(!curr_page->swap_backed){ //File backed only removes if the pid matches
-            if(curr_page->page_table_entries.size() == 1 && curr_page->dirty_bit == true && curr_page->privacy_bit == true){ //Last thing pointing to that file and block, write back its content if dirty
-                file_write(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * curr_page->page_table_entries.front().second->ppage]);
-            }
+            //THIS ACTUALLY WROTE TO THE FILE AND DIDN'T SEEM SAFE. Commenting for now, I don't know if this is necessary or not?
+            // if(curr_page->page_table_entries.size() == 1 && curr_page->dirty_bit == true && curr_page->privacy_bit == true){ //Last thing pointing to that file and block, write back its content if dirty
+            //     file_write(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * curr_page->page_table_entries.front().second->ppage]);
+            // }
+
             curr_page->page_table_entries.erase(remove_if(curr_page->page_table_entries.begin(), curr_page->page_table_entries.end(), [curr_page](pair <int, page_table_entry_t*> entry){
                 return entry.first == curr_pid;
             }));
         }
         else{ //Swap backed should only ever have 1 in its page table entries vector
-            assert(curr_page->page_table_entries.size() == 1);
-            curr_page->page_table_entries.pop_back();
+            //assert(curr_page->page_table_entries.size() == 1); //No longer true, since a copy-on-write swap backed page would be in its page_table_entries vector
+
+            /*
+                NEED SOME WAY TO FREE UP COPY ON WRITE SWAP BACKED PAGES in the case they were never written to to separate them
+                This is a TEMPORARY solution, but we may need to rethink it
+            */
+        //    if(curr_page->page_table_entries.size() > 1){ //Swap backed page with something that had a reserved copy-on-write swap block, but never wrote (so did not copy)
+        //         curr_page->page_table_entries.erase(remove_if(curr_page->page_table_entries.begin(), curr_page->page_table_entries.end(), [curr_page](pair <int, page_table_entry_t*> entry){
+        //             return entry.first == curr_pid;
+        //         }));
+        //         swap_index.push_back(reserved_swap_index.front());
+        //         reserved_swap_index.pop_front();
+        //     }
+            //else{ //Swap backed with nothing reserved for copy-on-write
+                curr_page->page_table_entries.pop_back();
+            //}
         }
 
         if(curr_page->page_table_entries.size() == 0){
@@ -414,6 +412,27 @@ int vm_fault(const void* addr, bool write_flag){
    
     pager_page_t* curr_page = processes[curr_pid]->page_table->entries[ ((uintptr_t) addr - processes[curr_pid]->arena_start) / VM_PAGESIZE]; //Page address is trying to access
     curr_page->reference_bit = true;
+
+    if(curr_page->swap_backed && write_flag == true && curr_page->page_table_entries.size() > 1){ //Swap backed page that has a copy-on-write, so we must copy before writing
+        unsigned int copy_on_ppage = curr_page->page_table_entries.front().second->ppage;
+        for(size_t i = 0; i < curr_page->page_table_entries.size(); i++){
+            if(curr_page->page_table_entries[i].first == curr_pid && curr_page->page_table_entries[i].second == &page_table_base_register->ptes[((uintptr_t) addr - processes[curr_pid]->arena_start) / VM_PAGESIZE]){
+                curr_page->page_table_entries.erase(curr_page->page_table_entries.begin() + i);
+                break;
+            }
+        }
+
+        vm_fault(addr, false); //Hint: Writing to a virtual page that is being shared via copy-on-write should have the same effect on the system as reading it, then writing it.
+        pager_page_t* copy_on_write_page = new pager_page_t;
+        copy_on_write_page->block = reserved_swap_index.front();
+        copy_on_write_page->swap_backed = true;
+        copy_on_write_page->filename = nullptr;
+        reserved_swap_index.pop_front();
+        processes[curr_pid]->page_table->entries[((uintptr_t) addr - processes[curr_pid]->arena_start) / VM_PAGESIZE] = copy_on_write_page;
+        char* copy_on_page_buffer = new char[VM_PAGESIZE];
+        memcpy(copy_on_page_buffer, &((char*)vm_physmem)[VM_PAGESIZE * copy_on_ppage], VM_PAGESIZE);
+        copy_on_write_page->page_table_entries.push_back(make_pair(curr_pid, &page_table_base_register->ptes[((uintptr_t) addr - processes[curr_pid]->arena_start) / VM_PAGESIZE]));
+    }
 
     if(curr_page->resident_bit == false){
         clock_insert(curr_page);

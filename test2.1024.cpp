@@ -43,7 +43,5 @@ int main()
         }
     }
 
-    cout << "end" << endl;
-
-    
+    cout << "end" << endl;  
 }
