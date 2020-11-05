@@ -329,10 +329,10 @@ void *vm_map(const char *filename, unsigned int block){
             }
             vm_fault(id, false);
             unsigned int ppage = page_table_base_register->ptes[((uintptr_t)id - processes[curr_pid]->arena_start)/VM_PAGESIZE].ppage;
-            ppage = (ppage * VM_PAGESIZE) + (filename_offset % VM_PAGESIZE);
-            filename_str += ((char*) vm_physmem)[ppage];
+            unsigned int ppage_offset = ((uintptr_t)id - processes[curr_pid]->arena_start) % VM_PAGESIZE;
+            filename_str += ((char*) vm_physmem)[((VM_PAGESIZE * ppage) + ppage_offset)];
             filename_offset += 1;
-            if(((char*) vm_physmem)[ppage] == '\0'){
+            if(((char*) vm_physmem)[((VM_PAGESIZE * ppage) + ppage_offset)] == '\0'){
                 break;
             }
         }
