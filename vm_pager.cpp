@@ -201,16 +201,22 @@ void vm_destroy(){
                 swap_index.push_back(curr_page->block);
                 swap_counter--;
             }
+            else{
+                string to_erase(curr_page->filename);
+                to_erase += "-" + to_string(curr_page->block);
+                filebacked_map.erase(to_erase);
+            }
             delete curr_page;
         }
     }
 
     
-    delete processes[curr_pid]->page_table; //Not sure why, but this line doesn't work. We're deleting everything else that's dynamically allocated, but this line causes issues
-    delete processes[curr_pid]->infrastructure_page_table; //Delete dynamically allocated memebers of process and dynamically allocated process
+    //delete processes[curr_pid]->page_table; //Not sure why, but this line doesn't work. We're deleting everything else that's dynamically allocated, but this line causes issues
+    //delete processes[curr_pid]->infrastructure_page_table; //Delete dynamically allocated memebers of process and dynamically allocated process
 
     // can only call delete[] if you call new[]
-
+    sort(phys_index.begin(), phys_index.end());
+    sort(swap_index.begin(), swap_index.end());
     delete processes[curr_pid];
     processes.erase(curr_pid); //Remove process from map
 }
