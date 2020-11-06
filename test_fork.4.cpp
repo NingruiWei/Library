@@ -72,7 +72,7 @@ int main(){
             file_1[0]++;
             file_1[0]++;
         }
-        else if(file_1[0] < file_5[0]){
+        else if(file_1[0] > file_5[0]){
             file_3[0] += file_4[0];
             file_1[0]--;
         }
