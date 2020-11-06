@@ -12,6 +12,9 @@ int main(){
     char* file_1 = (char*) vm_map(nullptr, 0);
     char* file_2 = (char*) vm_map(nullptr, 0);
 
+    // file_1[0] = '0';
+    // file_2[0] = '0';
+
     pretty_print(file_1);
     pretty_print(file_2);
     cout << endl;
@@ -19,6 +22,8 @@ int main(){
     file_2[0] = '2';
 
     char* file_3 = (char*) vm_map(nullptr, 0);
+
+    // file_3[0] = '0';
 
     file_1[0] = '1';
     file_2[0] = 'c';
@@ -37,6 +42,9 @@ int main(){
 
     char* file_4 = (char*) vm_map(nullptr, 0);
     char* file_5 = (char*) vm_map(nullptr, 0);
+
+    // file_4[0] = '0';
+    // file_5[0] = '0';
 
     file_4[0] = '4';
 
@@ -60,10 +68,14 @@ int main(){
 
     char* file_6 = (char*) vm_map(nullptr, 0);
 
-    fork();
-    vm_yield();
+    // file_6[0] = '0';
+
+    //fork();
+    //vm_yield();
 
     char* file_7 = (char*) vm_map(nullptr, 0);
+
+    // file_7[0] = '0';
 
     while(1){
         if(file_1[0] < file_5[0]){

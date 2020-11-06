@@ -66,6 +66,7 @@ void vm_init(unsigned int memory_pages, unsigned int swap_blocks){
     zero = new pager_page_t;
     zero->resident_bit = true;
     zero->pinned = true;
+    zero->reference_bit = true;
     page_table_entry_t * zero_entry = new page_table_entry_t;
     zero_entry->ppage = 0;
     zero->page_table_entries.push_back(make_pair(curr_pid, zero_entry));
@@ -99,9 +100,13 @@ int vm_create(pid_t parent_pid, pid_t child_pid){
 
             page_table_entry_t* temp_page = &child_process->infrastructure_page_table->ptes[i];
             if(!curr_parent_entry->page_table_entries.empty()){
+                if(curr_parent_entry->reference_bit == true && curr_parent_entry->resident_bit == true){
+                    temp_page->read_enable = true;
+                }
+                if(curr_parent_entry->reference_bit == true && curr_parent_entry->dirty_bit == true){
+                    temp_page->write_enable = true;
+                }
                 temp_page->ppage = curr_parent_entry->page_table_entries.front().second->ppage;
-                temp_page->read_enable = curr_parent_entry->page_table_entries.front().second->read_enable;
-                temp_page->write_enable = curr_parent_entry->page_table_entries.front().second->write_enable;
             }
             if(curr_parent_entry->pinned){
                 temp_page->ppage = 0;
@@ -157,6 +162,7 @@ void destroy_clock_page(pager_page_t* destroy_page){
     }
 }
 
+
 void vm_destroy(){
     page_table_base_register = nullptr; //No current page table since we're deleting the one we're currently running
     for(size_t i = processes[curr_pid]->arena_start; i < processes[curr_pid]->arena_valid_end; i += VM_PAGESIZE){
@@ -205,8 +211,9 @@ void vm_destroy(){
                 string to_erase(curr_page->filename);
                 to_erase += "-" + to_string(curr_page->block);
                 filebacked_map.erase(to_erase);
+                delete curr_page->filename;
             }
-            delete curr_page;
+            //delete curr_page;
         }
     }
 
