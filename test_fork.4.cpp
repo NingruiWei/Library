@@ -70,8 +70,8 @@ int main(){
 
     // file_6[0] = '0';
 
-    //fork();
-    //vm_yield();
+    fork();
+    vm_yield();
 
     char* file_7 = (char*) vm_map(nullptr, 0);
 

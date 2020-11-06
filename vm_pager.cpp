@@ -487,10 +487,12 @@ int vm_fault(const void* addr, bool write_flag){
         curr_page->dirty_bit = true;
     }
     else{
-        if(curr_page->page_table_entries.front().second->write_enable == true){
+        if(curr_page->page_table_entries.front().second->write_enable == true || curr_page->in_physmem == true){
+            curr_page->page_table_entries.front().second->write_enable = true;
             curr_page->dirty_bit = true;
         }
         else{
+            curr_page->page_table_entries.front().second->write_enable = false;
             curr_page->dirty_bit = false;
         }
         curr_page->page_table_entries.front().second->read_enable = true;
