@@ -4,3 +4,5 @@ test1.4.cpp
 test2.1024.cpp
 test3.4.cpp
 test_noncontiguous_memory.4.cpp
+test_fork.4.cpp
+test_file_and_swap.4.cpp
