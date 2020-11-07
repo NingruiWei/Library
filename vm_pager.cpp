@@ -434,8 +434,10 @@ int vm_fault(const void* addr, bool write_flag){
 
     if(curr_page->swap_backed && write_flag == true && curr_page->page_table_entries.size() > 1){ //Swap backed page that has a copy-on-write, so we must copy before writing
         unsigned int copy_on_ppage = curr_page->page_table_entries.front().second->ppage;
+        page_table_entry_t* copy_on_page;
         for(size_t i = 0; i < curr_page->page_table_entries.size(); i++){
             if(curr_page->page_table_entries[i].first == curr_pid && curr_page->page_table_entries[i].second == &page_table_base_register->ptes[((uintptr_t) addr - processes[curr_pid]->arena_start) / VM_PAGESIZE]){
+                copy_on_page = curr_page->page_table_entries[i].second;
                 curr_page->page_table_entries.erase(curr_page->page_table_entries.begin() + i);
                 break;
             }
@@ -446,11 +448,16 @@ int vm_fault(const void* addr, bool write_flag){
         copy_on_write_page->block = reserved_swap_index.front();
         copy_on_write_page->swap_backed = true;
         copy_on_write_page->filename = nullptr;
+        copy_on_write_page->in_physmem = curr_page->in_physmem;
+        copy_on_write_page->privacy_bit = curr_page->in_physmem;
+        copy_on_write_page->page_table_entries.push_back(make_pair(curr_pid, copy_on_page));
         reserved_swap_index.pop_front();
         processes[curr_pid]->page_table->entries[((uintptr_t) addr - processes[curr_pid]->arena_start) / VM_PAGESIZE] = copy_on_write_page;
+        //vm_fault(addr, false); //Hint: Writing to a virtual page that is being shared via copy-on-write should have the same effect on the system as reading it, then writing it.
         char* copy_on_page_buffer = new char[VM_PAGESIZE];
         memcpy(copy_on_page_buffer, &((char*)vm_physmem)[VM_PAGESIZE * copy_on_ppage], VM_PAGESIZE);
-        copy_on_write_page->page_table_entries.push_back(make_pair(curr_pid, &page_table_base_register->ptes[((uintptr_t) addr - processes[curr_pid]->arena_start) / VM_PAGESIZE]));
+        //copy_on_write_page->page_table_entries.push_back(make_pair(curr_pid, &page_table_base_register->ptes[((uintptr_t) addr - processes[curr_pid]->arena_start) / VM_PAGESIZE]));
+        curr_page = copy_on_write_page;
     }
 
     if(curr_page->resident_bit == false){

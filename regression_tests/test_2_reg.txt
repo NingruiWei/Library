@@ -1,42 +1,42 @@
-Pager started with 1024 physical memory pages
-vm_create       (10965, 11129)
+Pager started with 4 physical memory pages
+vm_create       (345, 1724)
 vm_create returned 0
-vm_switch       (11129)
-                                        returning to (11129) with pages:
-vm_map          (11129) 0x0     0
+vm_switch       (1724)
+                                        returning to (1724) with pages:
+vm_map          (1724)  0x0     0
 vm_map returned 0x600000000
-                                        returning to (11129) with pages:
+                                        returning to (1724) with pages:
                                         r       vpage 0x600000  ppage 0x0
-vm_fault        (11129) 0x600000000     write
+vm_fault        (1724)  0x600000000     write
 vm_fault returned 0
-                                        returning to (11129) with pages:
+                                        returning to (1724) with pages:
                                         rw      vpage 0x600000  ppage 0x1
-vm_map          (11129) 0x600000000     0
+vm_map          (1724)  0x600000000     0
 vm_map returned 0x600001000
-                                        returning to (11129) with pages:
+                                        returning to (1724) with pages:
                                         rw      vpage 0x600000  ppage 0x1
-vm_create       (11129, 11130)
+vm_create       (1724, 1725)
 vm_create returned 0
-                                        returning to (11129) with pages:
+                                        returning to (1724) with pages:
                                         r       vpage 0x600000  ppage 0x1
-vm_create       (11129, 11131)
+vm_create       (1724, 1726)
 vm_create returned 0
-                                        returning to (11129) with pages:
+                                        returning to (1724) with pages:
                                         r       vpage 0x600000  ppage 0x1
-vm_fault        (11129) 0x600001000     write
+vm_fault        (1724)  0x600001000     write
 file_read       data2.bin       0
 vm_fault returned 0
-                                        returning to (11129) with pages:
+                                        returning to (1724) with pages:
                                         r       vpage 0x600000  ppage 0x1
                                         rw      vpage 0x600001  ppage 0x2
-vm_destroy      (11129)
-vm_switch       (11130)
-                                        returning to (11130) with pages:
+vm_destroy      (1724)
+vm_switch       (1725)
+                                        returning to (1725) with pages:
                                         r       vpage 0x600000  ppage 0x1
                                         rw      vpage 0x600001  ppage 0x2
-vm_destroy      (11130)
-vm_switch       (11131)
-                                        returning to (11131) with pages:
-                                        r       vpage 0x600000  ppage 0x1
+vm_destroy      (1725)
+vm_switch       (1726)
+                                        returning to (1726) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
                                         rw      vpage 0x600001  ppage 0x2
-vm_destroy      (11131)
+vm_destroy      (1726)
