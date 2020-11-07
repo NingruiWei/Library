@@ -6,5 +6,5 @@ test3.4.cpp
 test_noncontiguous_memory.4.cpp
 test_fork.4.cpp
 test_file_and_swap.4.cpp
-test_fork_sort_4.cpp
+test_fork_sort.4.cpp
 test_fork_recurse.16.cpp
