@@ -267,7 +267,7 @@ void evict(){
             clocker.pop_front();
         }
         else{  //Clock hand pointing at page with reference of "0"
-            if(clocker.front()->dirty_bit == true && clocker.front()->privacy_bit == true){
+            if(clocker.front()->dirty_bit == true && (clocker.front()->filename != nullptr || clocker.front()->privacy_bit == true)){
                file_write(clocker.front()->filename, clocker.front()->block, &((char *)vm_physmem)[VM_PAGESIZE * clocker.front()->page_table_entries.front().second->ppage]);
             }
             phys_index.push_back(clocker.front()->page_table_entries.front().second->ppage);
