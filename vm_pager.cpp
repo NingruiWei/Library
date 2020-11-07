@@ -488,7 +488,9 @@ int vm_fault(const void* addr, bool write_flag){
     }
     else{
         if(curr_page->page_table_entries.front().second->write_enable == true || curr_page->in_physmem == true){
-            curr_page->page_table_entries.front().second->write_enable = true;
+            if((curr_page->swap_backed == true && !(curr_page->page_table_entries.size() > 1)) || curr_page->swap_backed == false){
+                curr_page->page_table_entries.front().second->write_enable = true;
+            }
             curr_page->dirty_bit = true;
         }
         else{
