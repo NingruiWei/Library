@@ -99,19 +99,20 @@ int vm_create(pid_t parent_pid, pid_t child_pid){
             }
 
             page_table_entry_t* temp_page = &child_process->infrastructure_page_table->ptes[i];
+            //page_table_entry_t* temp_page_parent = &parent_process->infrastructure_page_table->ptes[i];
             if(!curr_parent_entry->page_table_entries.empty()){
-                if(curr_parent_entry->reference_bit == true && curr_parent_entry->resident_bit == true){
-                    temp_page->read_enable = true;
-                }
-                if(curr_parent_entry->reference_bit == true && curr_parent_entry->dirty_bit == true){
-                    temp_page->write_enable = true;
-                }
+                temp_page->read_enable = curr_parent_entry->page_table_entries.front().second->read_enable;
+                temp_page->write_enable = curr_parent_entry->page_table_entries.front().second->write_enable;
                 temp_page->ppage = curr_parent_entry->page_table_entries.front().second->ppage;
+                //temp_page_parent->ppage = curr_parent_entry->page_table_entries.front().second->ppage;
             }
             if(curr_parent_entry->pinned){
                 temp_page->ppage = 0;
+                //temp_page_parent->ppage = 0;
                 temp_page->read_enable = true;
+                //temp_page_parent->read_enable = true;
                 temp_page->write_enable = false;
+                //temp_page_parent->write_enable = false;
             }
 
             curr_parent_entry->page_table_entries.push_back(make_pair(child_pid, temp_page));
