@@ -118,8 +118,10 @@ int vm_create(pid_t parent_pid, pid_t child_pid){
             curr_parent_entry->page_table_entries.push_back(make_pair(child_pid, temp_page));
             child_process->page_table->entries[i] = curr_parent_entry;
 
-            for(pair<pid_t, page_table_entry_t*> entry : curr_parent_entry->page_table_entries){
-                entry.second->write_enable = false; //Guarantee write is false so that we can copy on write if necessary
+            if (curr_parent_entry->swap_backed == true) {
+                for(pair<pid_t, page_table_entry_t*> entry : curr_parent_entry->page_table_entries){
+                    entry.second->write_enable = false; //Guarantee write is false so that we can copy on write if necessary
+                }
             }
         }
 
@@ -192,6 +194,9 @@ void vm_destroy(){
                 }));
                 swap_index.push_back(reserved_swap_index.front());
                 reserved_swap_index.pop_front();
+                if (curr_page->page_table_entries.size() == 1 && curr_page->dirty_bit == true && curr_page->reference_bit == true) {
+                    curr_page->page_table_entries.front().second->write_enable = true;
+                }
             }
             else{ //Swap backed with nothing reserved for copy-on-write
                 curr_page->page_table_entries.pop_back();
