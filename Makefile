@@ -14,11 +14,7 @@ pager: ${PAGER_OBJS} libvm_pager.o
 	${CC} -o $@ $^
 
 # Compile an application program
-<<<<<<< HEAD
 app: test_fork_sort.4.cpp libvm_app.o
-=======
-app: test_fork_recurse.16.cpp libvm_app.o
->>>>>>> 9d2b5087d5b2b2445019eb28a82c5138d9b26412
 	${CC} -o $@ $^ -ldl
 
 # Generic rules for compiling a source file to an object file

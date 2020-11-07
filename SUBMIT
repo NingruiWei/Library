@@ -6,8 +6,5 @@ test3.4.cpp
 test_noncontiguous_memory.4.cpp
 test_fork.4.cpp
 test_file_and_swap.4.cpp
-<<<<<<< HEAD
 test_fork_sort_4.cpp
-=======
 test_fork_recurse.16.cpp
->>>>>>> 9d2b5087d5b2b2445019eb28a82c5138d9b26412
