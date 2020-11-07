@@ -1,0 +1,854 @@
+Pager started with 4 physical memory pages
+vm_create       (466, 10196)
+vm_create returned 0
+vm_switch       (10196)
+                                        returning to (10196) with pages:
+vm_map          (10196) 0x0     0
+vm_map returned 0x600000000
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600000  ppage 0x0
+vm_map          (10196) 0x0     0
+vm_map returned 0x600001000
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600000  ppage 0x0
+                                        r       vpage 0x600001  ppage 0x0
+vm_fault        (10196) 0x600000000     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        r       vpage 0x600001  ppage 0x0
+vm_fault        (10196) 0x600001000     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600001  ppage 0x2
+vm_map          (10196) 0x600000000     0
+vm_map returned 0x600002000
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600001  ppage 0x2
+vm_map          (10196) 0x600001000     0
+vm_map returned 0x600003000
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600001  ppage 0x2
+vm_map          (10196) 0x600000000     0
+vm_map returned 0x600004000
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600001  ppage 0x2
+vm_map          (10196) 0x600001000     0
+vm_map returned 0x600005000
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600001  ppage 0x2
+vm_fault        (10196) 0x600002000     read
+file_read       data1.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600001  ppage 0x2
+                                        r       vpage 0x600002  ppage 0x3
+vm_fault        (10196) 0x600003000     read
+file_write      <swap>  0
+file_read       data2.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600003  ppage 0x1
+vm_fault        (10196) 0x600002000     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+vm_fault        (10196) 0x600004000     read
+file_write      <swap>  1
+file_read       data3.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x2
+vm_fault        (10196) 0x600003001     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x3
+                                        rw      vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x2
+vm_fault        (10196) 0x600005001     read
+file_read       data4.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600005  ppage 0x3
+vm_fault        (10196) 0x600002000     write
+file_read       data1.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x3
+vm_fault        (10196) 0x600000000     read
+file_read       <swap>  0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x2
+                                        rw      vpage 0x600002  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x3
+vm_fault        (10196) 0x600001000     read
+file_read       <swap>  1
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600001  ppage 0x3
+vm_fault        (10196) 0x600002001     read
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600001  ppage 0x3
+                                        rw      vpage 0x600002  ppage 0x1
+vm_fault        (10196) 0x600003001     read
+file_write      <swap>  0
+file_read       data2.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600001  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x2
+vm_fault        (10196) 0x600002001     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600001  ppage 0x3
+                                        rw      vpage 0x600002  ppage 0x1
+                                        r       vpage 0x600003  ppage 0x2
+vm_fault        (10196) 0x600004001     read
+file_write      <swap>  1
+file_read       data3.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600004  ppage 0x3
+vm_fault        (10196) 0x600003002     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600004  ppage 0x3
+vm_fault        (10196) 0x600005002     read
+file_write      data1.bin       0
+file_read       data4.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600004  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x1
+vm_fault        (10196) 0x600002001     write
+file_read       data1.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x2
+vm_fault        (10196) 0x600000001     read
+file_read       <swap>  0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        rw      vpage 0x600002  ppage 0x2
+vm_fault        (10196) 0x600001001     read
+file_read       <swap>  1
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        rw      vpage 0x600001  ppage 0x1
+                                        rw      vpage 0x600002  ppage 0x2
+vm_fault        (10196) 0x600003002     read
+file_write      data1.bin       0
+file_read       data2.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600003  ppage 0x2
+vm_fault        (10196) 0x600002002     write
+file_write      <swap>  0
+file_read       data1.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x2
+vm_fault        (10196) 0x600004002     read
+file_write      <swap>  1
+file_read       data3.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600004  ppage 0x1
+vm_fault        (10196) 0x600003003     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x3
+                                        rw      vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600004  ppage 0x1
+vm_fault        (10196) 0x600005003     read
+file_read       data4.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600005  ppage 0x2
+vm_fault        (10196) 0x600002002     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x2
+vm_fault        (10196) 0x600000002     read
+file_read       <swap>  0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x2
+vm_fault        (10196) 0x600001002     read
+file_write      data1.bin       0
+file_read       <swap>  1
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600001  ppage 0x3
+vm_fault        (10196) 0x600002003     read
+file_read       data1.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600001  ppage 0x3
+                                        r       vpage 0x600002  ppage 0x2
+vm_fault        (10196) 0x600003003     read
+file_write      <swap>  0
+file_read       data2.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600003  ppage 0x1
+vm_fault        (10196) 0x600002003     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600003  ppage 0x1
+vm_fault        (10196) 0x600004003     read
+file_write      <swap>  1
+file_read       data3.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x3
+vm_fault        (10196) 0x600003004     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x3
+vm_fault        (10196) 0x600005004     read
+file_write      data1.bin       0
+file_read       data4.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600004  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x2
+vm_fault        (10196) 0x600002003     write
+file_read       data1.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x2
+vm_fault        (10196) 0x600000003     read
+file_read       <swap>  0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        rw      vpage 0x600002  ppage 0x1
+vm_fault        (10196) 0x600001003     read
+file_read       <swap>  1
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        rw      vpage 0x600001  ppage 0x2
+vm_fault        (10196) 0x600002004     read
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        rw      vpage 0x600001  ppage 0x2
+                                        rw      vpage 0x600002  ppage 0x1
+vm_fault        (10196) 0x600003004     read
+file_write      <swap>  0
+file_read       data2.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600003  ppage 0x3
+vm_fault        (10196) 0x600002004     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x1
+                                        r       vpage 0x600003  ppage 0x3
+vm_fault        (10196) 0x600004004     read
+file_write      <swap>  1
+file_read       data3.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600003  ppage 0x3
+                                        r       vpage 0x600004  ppage 0x2
+vm_fault        (10196) 0x600003005     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600003  ppage 0x3
+                                        r       vpage 0x600004  ppage 0x2
+vm_fault        (10196) 0x600005005     read
+file_write      data1.bin       0
+file_read       data4.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x1
+vm_fault        (10196) 0x600002004     write
+file_read       data1.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x1
+vm_fault        (10196) 0x600000004     read
+file_read       <swap>  0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x2
+                                        rw      vpage 0x600002  ppage 0x3
+vm_fault        (10196) 0x600001004     read
+file_read       <swap>  1
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x2
+                                        rw      vpage 0x600001  ppage 0x1
+vm_fault        (10196) 0x600002005     read
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x2
+                                        rw      vpage 0x600001  ppage 0x1
+                                        rw      vpage 0x600002  ppage 0x3
+vm_fault        (10196) 0x600003005     read
+file_write      <swap>  0
+file_read       data2.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600003  ppage 0x2
+vm_fault        (10196) 0x600002005     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x2
+vm_fault        (10196) 0x600004005     read
+file_write      <swap>  1
+file_read       data3.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600004  ppage 0x1
+vm_fault        (10196) 0x600003006     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600004  ppage 0x1
+vm_fault        (10196) 0x600005006     read
+file_write      data1.bin       0
+file_read       data4.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600004  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x3
+vm_fault        (10196) 0x600002005     write
+file_read       data1.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x3
+vm_fault        (10196) 0x600000005     read
+file_read       <swap>  0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600002  ppage 0x2
+vm_fault        (10196) 0x600001005     read
+file_read       <swap>  1
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600001  ppage 0x3
+vm_fault        (10196) 0x600002006     read
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600001  ppage 0x3
+                                        rw      vpage 0x600002  ppage 0x2
+vm_fault        (10196) 0x600003006     read
+file_write      <swap>  0
+file_read       data2.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600003  ppage 0x1
+vm_fault        (10196) 0x600002006     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600003  ppage 0x1
+vm_fault        (10196) 0x600004006     read
+file_write      <swap>  1
+file_read       data3.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x3
+vm_fault        (10196) 0x600003007     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x3
+vm_fault        (10196) 0x600005007     read
+file_write      data1.bin       0
+file_read       data4.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600004  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x2
+vm_fault        (10196) 0x600002006     write
+file_read       data1.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x2
+vm_fault        (10196) 0x600000006     read
+file_read       <swap>  0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        rw      vpage 0x600002  ppage 0x1
+vm_fault        (10196) 0x600001006     read
+file_read       <swap>  1
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        rw      vpage 0x600001  ppage 0x2
+vm_fault        (10196) 0x600002007     read
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        rw      vpage 0x600001  ppage 0x2
+                                        rw      vpage 0x600002  ppage 0x1
+vm_fault        (10196) 0x600003007     read
+file_write      <swap>  0
+file_read       data2.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600003  ppage 0x3
+vm_fault        (10196) 0x600002007     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x1
+                                        r       vpage 0x600003  ppage 0x3
+vm_fault        (10196) 0x600004007     read
+file_write      <swap>  1
+file_read       data3.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600003  ppage 0x3
+                                        r       vpage 0x600004  ppage 0x2
+vm_fault        (10196) 0x600003008     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600003  ppage 0x3
+                                        r       vpage 0x600004  ppage 0x2
+vm_fault        (10196) 0x600005008     read
+file_write      data1.bin       0
+file_read       data4.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x1
+vm_fault        (10196) 0x600002007     write
+file_read       data1.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x1
+vm_fault        (10196) 0x600000007     read
+file_read       <swap>  0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x2
+                                        rw      vpage 0x600002  ppage 0x3
+vm_fault        (10196) 0x600001007     read
+file_read       <swap>  1
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x2
+                                        rw      vpage 0x600001  ppage 0x1
+vm_fault        (10196) 0x600002008     read
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x2
+                                        rw      vpage 0x600001  ppage 0x1
+                                        rw      vpage 0x600002  ppage 0x3
+vm_fault        (10196) 0x600003008     read
+file_write      <swap>  0
+file_read       data2.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600003  ppage 0x2
+vm_fault        (10196) 0x600002008     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x2
+vm_fault        (10196) 0x600004008     read
+file_write      <swap>  1
+file_read       data3.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600004  ppage 0x1
+vm_fault        (10196) 0x600003009     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600004  ppage 0x1
+vm_fault        (10196) 0x600005009     read
+file_write      data1.bin       0
+file_read       data4.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600004  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x3
+vm_fault        (10196) 0x600002008     write
+file_read       data1.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x3
+vm_fault        (10196) 0x600000008     read
+file_read       <swap>  0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600002  ppage 0x2
+vm_fault        (10196) 0x600001008     read
+file_read       <swap>  1
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600001  ppage 0x3
+vm_fault        (10196) 0x600002009     read
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600001  ppage 0x3
+                                        rw      vpage 0x600002  ppage 0x2
+vm_fault        (10196) 0x600003009     read
+file_write      <swap>  0
+file_read       data2.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600003  ppage 0x1
+vm_fault        (10196) 0x600002009     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600003  ppage 0x1
+vm_fault        (10196) 0x600004009     read
+file_write      <swap>  1
+file_read       data3.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x3
+vm_fault        (10196) 0x60000300a     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x3
+vm_fault        (10196) 0x60000500a     read
+file_write      data1.bin       0
+file_read       data4.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600004  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x2
+vm_fault        (10196) 0x600002009     write
+file_read       data1.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x2
+vm_fault        (10196) 0x600000009     read
+file_read       <swap>  0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        rw      vpage 0x600002  ppage 0x1
+vm_fault        (10196) 0x600001009     read
+file_read       <swap>  1
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        rw      vpage 0x600001  ppage 0x2
+vm_fault        (10196) 0x60000200a     read
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        rw      vpage 0x600001  ppage 0x2
+                                        rw      vpage 0x600002  ppage 0x1
+vm_fault        (10196) 0x60000300a     read
+file_write      <swap>  0
+file_read       data2.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600003  ppage 0x3
+vm_fault        (10196) 0x60000200a     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x1
+                                        r       vpage 0x600003  ppage 0x3
+vm_fault        (10196) 0x60000400a     read
+file_write      <swap>  1
+file_read       data3.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600003  ppage 0x3
+                                        r       vpage 0x600004  ppage 0x2
+vm_fault        (10196) 0x60000300b     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600003  ppage 0x3
+                                        r       vpage 0x600004  ppage 0x2
+vm_fault        (10196) 0x60000500b     read
+file_write      data1.bin       0
+file_read       data4.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x1
+vm_fault        (10196) 0x60000200a     write
+file_read       data1.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x1
+vm_fault        (10196) 0x60000000a     read
+file_read       <swap>  0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x2
+                                        rw      vpage 0x600002  ppage 0x3
+vm_fault        (10196) 0x60000100a     read
+file_read       <swap>  1
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x2
+                                        rw      vpage 0x600001  ppage 0x1
+vm_fault        (10196) 0x60000200b     read
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x2
+                                        rw      vpage 0x600001  ppage 0x1
+                                        rw      vpage 0x600002  ppage 0x3
+vm_fault        (10196) 0x60000300b     read
+file_write      <swap>  0
+file_read       data2.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600003  ppage 0x2
+vm_fault        (10196) 0x60000200b     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x2
+vm_fault        (10196) 0x60000400b     read
+file_write      <swap>  1
+file_read       data3.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600004  ppage 0x1
+vm_fault        (10196) 0x60000300c     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600004  ppage 0x1
+vm_fault        (10196) 0x60000500c     read
+file_write      data1.bin       0
+file_read       data4.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600004  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x3
+vm_fault        (10196) 0x60000200b     write
+file_read       data1.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x3
+vm_fault        (10196) 0x60000000b     read
+file_read       <swap>  0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600002  ppage 0x2
+vm_fault        (10196) 0x60000100b     read
+file_read       <swap>  1
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600001  ppage 0x3
+vm_fault        (10196) 0x60000200c     read
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600001  ppage 0x3
+                                        rw      vpage 0x600002  ppage 0x2
+vm_fault        (10196) 0x60000300c     read
+file_write      <swap>  0
+file_read       data2.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600003  ppage 0x1
+vm_fault        (10196) 0x60000200c     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600003  ppage 0x1
+vm_fault        (10196) 0x60000400c     read
+file_write      <swap>  1
+file_read       data3.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x3
+vm_fault        (10196) 0x60000300d     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x3
+vm_fault        (10196) 0x60000500d     read
+file_write      data1.bin       0
+file_read       data4.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600004  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x2
+vm_fault        (10196) 0x60000200c     write
+file_read       data1.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x2
+vm_fault        (10196) 0x60000000c     read
+file_read       <swap>  0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        rw      vpage 0x600002  ppage 0x1
+vm_fault        (10196) 0x60000100c     read
+file_read       <swap>  1
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        rw      vpage 0x600001  ppage 0x2
+vm_fault        (10196) 0x60000200d     read
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        rw      vpage 0x600001  ppage 0x2
+                                        rw      vpage 0x600002  ppage 0x1
+vm_fault        (10196) 0x60000300d     read
+file_write      <swap>  0
+file_read       data2.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600003  ppage 0x3
+vm_fault        (10196) 0x60000200d     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x1
+                                        r       vpage 0x600003  ppage 0x3
+vm_fault        (10196) 0x60000400d     read
+file_write      <swap>  1
+file_read       data3.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600003  ppage 0x3
+                                        r       vpage 0x600004  ppage 0x2
+vm_fault        (10196) 0x60000300e     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600003  ppage 0x3
+                                        r       vpage 0x600004  ppage 0x2
+vm_fault        (10196) 0x60000500e     read
+file_write      data1.bin       0
+file_read       data4.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x1
+vm_fault        (10196) 0x60000200d     write
+file_read       data1.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x1
+vm_fault        (10196) 0x60000000d     read
+file_read       <swap>  0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x2
+                                        rw      vpage 0x600002  ppage 0x3
+vm_fault        (10196) 0x60000100d     read
+file_read       <swap>  1
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x2
+                                        rw      vpage 0x600001  ppage 0x1
+vm_fault        (10196) 0x60000200e     read
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x2
+                                        rw      vpage 0x600001  ppage 0x1
+                                        rw      vpage 0x600002  ppage 0x3
+vm_fault        (10196) 0x60000300e     read
+file_write      <swap>  0
+file_read       data2.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600003  ppage 0x2
+vm_fault        (10196) 0x60000200e     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x2
+vm_fault        (10196) 0x60000400e     read
+file_write      <swap>  1
+file_read       data3.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600004  ppage 0x1
+vm_fault        (10196) 0x60000300f     write
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600004  ppage 0x1
+vm_fault        (10196) 0x60000500f     read
+file_write      data1.bin       0
+file_read       data4.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        r       vpage 0x600004  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x3
+vm_fault        (10196) 0x60000200e     write
+file_read       data1.bin       0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x3
+vm_fault        (10196) 0x60000000e     read
+file_read       <swap>  0
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600002  ppage 0x2
+vm_fault        (10196) 0x60000100e     read
+file_read       <swap>  1
+vm_fault returned 0
+                                        returning to (10196) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600001  ppage 0x3
+vm_destroy      (10196)

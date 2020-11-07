@@ -1,0 +1,35 @@
+Pager started with 4 physical memory pages
+vm_create       (10965, 11239)
+vm_create returned 0
+vm_switch       (11239)
+                                        returning to (11239) with pages:
+vm_map          (11239) 0x0     0
+vm_map returned 0x600000000
+                                        returning to (11239) with pages:
+                                        r       vpage 0x600000  ppage 0x0
+vm_fault        (11239) 0x600000000     write
+vm_fault returned 0
+                                        returning to (11239) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+vm_map          (11239) 0x600000000     0
+vm_map returned 0x600001000
+                                        returning to (11239) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+vm_map          (11239) 0x600000000     0
+vm_map returned 0x600002000
+                                        returning to (11239) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+vm_fault        (11239) 0x600001000     read
+file_read       shakespeare.txt 0
+vm_fault returned 0
+                                        returning to (11239) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        r       vpage 0x600001  ppage 0x2
+                                        r       vpage 0x600002  ppage 0x2
+vm_fault        (11239) 0x600002000     write
+vm_fault returned 0
+                                        returning to (11239) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600001  ppage 0x2
+                                        rw      vpage 0x600002  ppage 0x2
+vm_destroy      (11239)

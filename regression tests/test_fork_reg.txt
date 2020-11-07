@@ -1,0 +1,785 @@
+Pager started with 4 physical memory pages
+vm_create       (10424, 10688)
+vm_create returned 0
+vm_switch       (10688)
+                                        returning to (10688) with pages:
+vm_map          (10688) 0x0     0
+vm_map returned 0x600000000
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600000  ppage 0x0
+vm_map          (10688) 0x0     0
+vm_map returned 0x600001000
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600000  ppage 0x0
+                                        r       vpage 0x600001  ppage 0x0
+vm_fault        (10688) 0x600001000     write
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600000  ppage 0x0
+                                        rw      vpage 0x600001  ppage 0x1
+vm_map          (10688) 0x0     0
+vm_map returned 0x600002000
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600000  ppage 0x0
+                                        rw      vpage 0x600001  ppage 0x1
+                                        r       vpage 0x600002  ppage 0x0
+vm_fault        (10688) 0x600000000     write
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        rw      vpage 0x600000  ppage 0x2
+                                        rw      vpage 0x600001  ppage 0x1
+                                        r       vpage 0x600002  ppage 0x0
+vm_fault        (10688) 0x600002000     write
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        rw      vpage 0x600000  ppage 0x2
+                                        rw      vpage 0x600001  ppage 0x1
+                                        rw      vpage 0x600002  ppage 0x3
+vm_map          (10688) 0x0     0
+vm_map returned 0x600003000
+                                        returning to (10688) with pages:
+                                        rw      vpage 0x600000  ppage 0x2
+                                        rw      vpage 0x600001  ppage 0x1
+                                        rw      vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x0
+vm_map          (10688) 0x0     0
+vm_map returned 0x600004000
+                                        returning to (10688) with pages:
+                                        rw      vpage 0x600000  ppage 0x2
+                                        rw      vpage 0x600001  ppage 0x1
+                                        rw      vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x0
+                                        r       vpage 0x600004  ppage 0x0
+vm_fault        (10688) 0x600003000     write
+file_write      <swap>  1
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        rw      vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x0
+vm_fault        (10688) 0x600000000     read
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        rw      vpage 0x600000  ppage 0x2
+                                        rw      vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x0
+vm_fault        (10688) 0x600001000     read
+file_write      <swap>  2
+file_read       <swap>  1
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600001  ppage 0x3
+                                        rw      vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x0
+vm_fault        (10688) 0x600002000     read
+file_write      <swap>  0
+file_read       <swap>  2
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600001  ppage 0x3
+                                        r       vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600004  ppage 0x0
+vm_fault        (10688) 0x600003000     read
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600001  ppage 0x3
+                                        r       vpage 0x600002  ppage 0x2
+                                        rw      vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x0
+vm_fault        (10688) 0x600004000     write
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        rw      vpage 0x600004  ppage 0x3
+vm_fault        (10688) 0x600000000     read
+file_write      <swap>  3
+file_read       <swap>  0
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600004  ppage 0x3
+vm_fault        (10688) 0x600001000     read
+file_read       <swap>  1
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600000  ppage 0x1
+                                        r       vpage 0x600001  ppage 0x2
+                                        rw      vpage 0x600004  ppage 0x3
+vm_fault        (10688) 0x600002000     read
+file_write      <swap>  4
+file_read       <swap>  2
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600002  ppage 0x3
+vm_fault        (10688) 0x600003000     read
+file_read       <swap>  3
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+vm_fault        (10688) 0x600004000     read
+file_read       <swap>  4
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x2
+vm_fault        (10688) 0x600004000     write
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+                                        rw      vpage 0x600004  ppage 0x2
+vm_map          (10688) 0x0     0
+vm_map returned 0x600005000
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+                                        rw      vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x0
+vm_create       (10688, 10689)
+vm_create returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x0
+vm_switch       (10689)
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x2
+vm_switch       (10688)
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x0
+vm_map          (10688) 0x0     0
+vm_map returned 0x600006000
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600000000     read
+file_read       <swap>  0
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600000  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600004000     read
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600000  ppage 0x3
+                                        r       vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600000000     write
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600000  ppage 0x3
+                                        r       vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600000000     write
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600001000     read
+file_write      <swap>  4
+file_read       <swap>  1
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600001  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600001000     write
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600001  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600001000     write
+file_write      <swap>  0
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        rw      vpage 0x600001  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600000000     read
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600001  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600002000     read
+file_write      <swap>  6
+file_read       <swap>  2
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600002  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600003000     read
+file_write      <swap>  1
+file_read       <swap>  3
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600002  ppage 0x1
+                                        r       vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600004000     read
+file_write      <swap>  7
+file_read       <swap>  4
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600002  ppage 0x1
+                                        r       vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600004  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600000000     read
+file_read       <swap>  6
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600000  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600004000     read
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600000  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600000000     write
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600001000     read
+file_read       <swap>  7
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        r       vpage 0x600001  ppage 0x2
+                                        r       vpage 0x600004  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600001000     write
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600001  ppage 0x2
+                                        r       vpage 0x600004  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600002000     read
+file_read       <swap>  2
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600003000     read
+file_write      <swap>  6
+file_read       <swap>  3
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600004000     read
+file_write      <swap>  7
+file_read       <swap>  4
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600000000     read
+file_read       <swap>  6
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600000  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600004000     read
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600000  ppage 0x3
+                                        r       vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600000000     write
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        r       vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600001000     read
+file_read       <swap>  7
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        r       vpage 0x600001  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600001000     write
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        rw      vpage 0x600001  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600002000     read
+file_read       <swap>  2
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600003000     read
+file_write      <swap>  6
+file_read       <swap>  3
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600003  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600004000     read
+file_write      <swap>  7
+file_read       <swap>  4
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600003  ppage 0x3
+                                        r       vpage 0x600004  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600000000     read
+file_read       <swap>  6
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600000  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600004000     read
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600000  ppage 0x2
+                                        r       vpage 0x600004  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600002000     read
+file_read       <swap>  2
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600000  ppage 0x2
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600004  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600003000     read
+file_read       <swap>  3
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600002000     write
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600002000     write
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        rw      vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600000000     read
+file_write      <swap>  2
+file_read       <swap>  6
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600000  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600000000     write
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600001000     read
+file_read       <swap>  7
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        r       vpage 0x600001  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600002000     read
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        r       vpage 0x600001  ppage 0x1
+                                        rw      vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600003000     read
+file_write      <swap>  8
+file_read       <swap>  3
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600004000     read
+file_write      <swap>  6
+file_read       <swap>  4
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600004  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600000000     read
+file_read       <swap>  6
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600000  ppage 0x1
+                                        r       vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600004  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600001000     read
+file_read       <swap>  7
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600001  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600002000     read
+file_read       <swap>  8
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600001  ppage 0x2
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600003000     read
+file_read       <swap>  3
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600001  ppage 0x2
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10688) 0x600004000     read
+file_read       <swap>  4
+vm_fault returned 0
+                                        returning to (10688) with pages:
+                                        r       vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x0
+                                        r       vpage 0x600006  ppage 0x0
+vm_destroy      (10688)
+vm_switch       (10689)
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600004  ppage 0x2
+vm_map          (10689) 0x0     0
+vm_map returned 0x600006000
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600000000     read
+file_read       <swap>  0
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600000  ppage 0x3
+                                        r       vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600000000     write
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        r       vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600001000     read
+file_read       <swap>  1
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        r       vpage 0x600001  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600001000     write
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        rw      vpage 0x600001  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600002000     read
+file_read       <swap>  2
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600003000     read
+file_write      <swap>  0
+file_read       <swap>  3
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600003  ppage 0x3
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600004000     read
+file_write      <swap>  1
+file_read       <swap>  4
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600003  ppage 0x3
+                                        r       vpage 0x600004  ppage 0x1
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600000000     read
+file_read       <swap>  0
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600000  ppage 0x2
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600004000     read
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600000  ppage 0x2
+                                        r       vpage 0x600004  ppage 0x1
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600000000     write
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        rw      vpage 0x600000  ppage 0x2
+                                        r       vpage 0x600004  ppage 0x1
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600001000     read
+file_read       <swap>  1
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        rw      vpage 0x600000  ppage 0x2
+                                        r       vpage 0x600001  ppage 0x3
+                                        r       vpage 0x600004  ppage 0x1
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600001000     write
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        rw      vpage 0x600000  ppage 0x2
+                                        rw      vpage 0x600001  ppage 0x3
+                                        r       vpage 0x600004  ppage 0x1
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600002000     read
+file_read       <swap>  2
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600002  ppage 0x1
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600003000     read
+file_write      <swap>  0
+file_read       <swap>  3
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600002  ppage 0x1
+                                        r       vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600004000     read
+file_write      <swap>  1
+file_read       <swap>  4
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600002  ppage 0x1
+                                        r       vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600004  ppage 0x3
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600000000     read
+file_read       <swap>  0
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600000  ppage 0x1
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600004000     read
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600000  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x3
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600000000     write
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x3
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600001000     read
+file_read       <swap>  1
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        r       vpage 0x600001  ppage 0x2
+                                        r       vpage 0x600004  ppage 0x3
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600001000     write
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600001  ppage 0x2
+                                        r       vpage 0x600004  ppage 0x3
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600002000     read
+file_read       <swap>  2
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600003000     read
+file_write      <swap>  0
+file_read       <swap>  3
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600004000     read
+file_write      <swap>  1
+file_read       <swap>  4
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600000000     read
+file_read       <swap>  0
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600000  ppage 0x3
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600004000     read
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600000  ppage 0x3
+                                        r       vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600002000     read
+file_read       <swap>  2
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600000  ppage 0x3
+                                        r       vpage 0x600002  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600003000     read
+file_read       <swap>  3
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600002000     write
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        rw      vpage 0x600002  ppage 0x1
+                                        r       vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600000000     read
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600000  ppage 0x3
+                                        rw      vpage 0x600002  ppage 0x1
+                                        r       vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600000000     write
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        rw      vpage 0x600002  ppage 0x1
+                                        r       vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600001000     read
+file_write      <swap>  0
+file_read       <swap>  1
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600001  ppage 0x3
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600002000     read
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600001  ppage 0x3
+                                        rw      vpage 0x600002  ppage 0x1
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600003000     read
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600001  ppage 0x3
+                                        rw      vpage 0x600002  ppage 0x1
+                                        r       vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600004000     read
+file_write      <swap>  2
+file_read       <swap>  4
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600004  ppage 0x1
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600000000     read
+file_read       <swap>  0
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600000  ppage 0x2
+                                        r       vpage 0x600004  ppage 0x1
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600001000     read
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600000  ppage 0x2
+                                        r       vpage 0x600001  ppage 0x3
+                                        r       vpage 0x600004  ppage 0x1
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600002000     read
+file_read       <swap>  2
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600003000     read
+file_read       <swap>  3
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (10689) 0x600004000     read
+file_read       <swap>  4
+vm_fault returned 0
+                                        returning to (10689) with pages:
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600006  ppage 0x0
+vm_destroy      (10689)

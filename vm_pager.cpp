@@ -488,10 +488,10 @@ int vm_fault(const void* addr, bool write_flag){
     }
     else{
         if(curr_page->page_table_entries.front().second->write_enable == true || curr_page->in_physmem == true){
-            if((curr_page->swap_backed == true && !(curr_page->page_table_entries.size() > 1)) || curr_page->swap_backed == false){
+            if(((curr_page->swap_backed == true && !(curr_page->page_table_entries.size() > 1)) || curr_page->swap_backed == false) && curr_page->dirty_bit == true){
                 curr_page->page_table_entries.front().second->write_enable = true;
+                curr_page->dirty_bit = true;
             }
-            curr_page->dirty_bit = true;
         }
         else{
             curr_page->page_table_entries.front().second->write_enable = false;
