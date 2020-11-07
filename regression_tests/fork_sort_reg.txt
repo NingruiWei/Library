@@ -1,72 +1,72 @@
 Pager started with 4 physical memory pages
-vm_create       (466, 10274)
+vm_create       (523, 2662)
 vm_create returned 0
-vm_switch       (10274)
-                                        returning to (10274) with pages:
-vm_map          (10274) 0x0     0
+vm_switch       (2662)
+                                        returning to (2662) with pages:
+vm_map          (2662)  0x0     0
 vm_map returned 0x600000000
-                                        returning to (10274) with pages:
+                                        returning to (2662) with pages:
                                         r       vpage 0x600000  ppage 0x0
-vm_map          (10274) 0x0     0
+vm_map          (2662)  0x0     0
 vm_map returned 0x600001000
-                                        returning to (10274) with pages:
+                                        returning to (2662) with pages:
                                         r       vpage 0x600000  ppage 0x0
                                         r       vpage 0x600001  ppage 0x0
-vm_fault        (10274) 0x600000ffd     write
+vm_fault        (2662)  0x600000ffd     write
 vm_fault returned 0
-                                        returning to (10274) with pages:
+                                        returning to (2662) with pages:
                                         rw      vpage 0x600000  ppage 0x1
                                         r       vpage 0x600001  ppage 0x0
-vm_fault        (10274) 0x600001000     write
+vm_fault        (2662)  0x600001000     write
 vm_fault returned 0
-                                        returning to (10274) with pages:
+                                        returning to (2662) with pages:
                                         rw      vpage 0x600000  ppage 0x1
                                         rw      vpage 0x600001  ppage 0x2
-vm_map          (10274) 0x0     0
+vm_map          (2662)  0x0     0
 vm_map returned 0x600002000
-                                        returning to (10274) with pages:
+                                        returning to (2662) with pages:
                                         rw      vpage 0x600000  ppage 0x1
                                         rw      vpage 0x600001  ppage 0x2
                                         r       vpage 0x600002  ppage 0x0
-vm_map          (10274) 0x0     0
+vm_map          (2662)  0x0     0
 vm_map returned 0x600003000
-                                        returning to (10274) with pages:
+                                        returning to (2662) with pages:
                                         rw      vpage 0x600000  ppage 0x1
                                         rw      vpage 0x600001  ppage 0x2
                                         r       vpage 0x600002  ppage 0x0
                                         r       vpage 0x600003  ppage 0x0
-vm_map          (10274) 0x600000ffd     0
+vm_map          (2662)  0x600000ffd     0
 vm_map returned 0x600004000
-                                        returning to (10274) with pages:
+                                        returning to (2662) with pages:
                                         rw      vpage 0x600000  ppage 0x1
                                         rw      vpage 0x600001  ppage 0x2
                                         r       vpage 0x600002  ppage 0x0
                                         r       vpage 0x600003  ppage 0x0
-vm_map          (10274) 0x600000ffd     0
+vm_map          (2662)  0x600000ffd     0
 vm_map returned 0x600005000
-                                        returning to (10274) with pages:
+                                        returning to (2662) with pages:
                                         rw      vpage 0x600000  ppage 0x1
                                         rw      vpage 0x600001  ppage 0x2
                                         r       vpage 0x600002  ppage 0x0
                                         r       vpage 0x600003  ppage 0x0
-vm_map          (10274) 0x600000ffd     0
+vm_map          (2662)  0x600000ffd     0
 vm_map returned 0x600006000
-                                        returning to (10274) with pages:
+                                        returning to (2662) with pages:
                                         rw      vpage 0x600000  ppage 0x1
                                         rw      vpage 0x600001  ppage 0x2
                                         r       vpage 0x600002  ppage 0x0
                                         r       vpage 0x600003  ppage 0x0
-vm_map          (10274) 0x600000ffd     5
+vm_map          (2662)  0x600000ffd     5
 vm_map returned 0x600007000
-                                        returning to (10274) with pages:
+                                        returning to (2662) with pages:
                                         rw      vpage 0x600000  ppage 0x1
                                         rw      vpage 0x600001  ppage 0x2
                                         r       vpage 0x600002  ppage 0x0
                                         r       vpage 0x600003  ppage 0x0
-vm_fault        (10274) 0x600006000     write
+vm_fault        (2662)  0x600006000     write
 file_read       data2.bin       0
 vm_fault returned 0
-                                        returning to (10274) with pages:
+                                        returning to (2662) with pages:
                                         rw      vpage 0x600000  ppage 0x1
                                         rw      vpage 0x600001  ppage 0x2
                                         r       vpage 0x600002  ppage 0x0
@@ -74,124 +74,142 @@ vm_fault returned 0
                                         rw      vpage 0x600004  ppage 0x3
                                         rw      vpage 0x600005  ppage 0x3
                                         rw      vpage 0x600006  ppage 0x3
-vm_fault        (10274) 0x600007000     read
+vm_fault        (2662)  0x600007000     read
 file_write      <swap>  0
 file_read       data2.bin       5
 vm_fault returned 0
-                                        returning to (10274) with pages:
+                                        returning to (2662) with pages:
                                         r       vpage 0x600002  ppage 0x0
                                         r       vpage 0x600003  ppage 0x0
                                         r       vpage 0x600007  ppage 0x1
-vm_fault        (10274) 0x600006000     read
+vm_fault        (2662)  0x600006000     read
 vm_fault returned 0
-                                        returning to (10274) with pages:
+                                        returning to (2662) with pages:
                                         r       vpage 0x600002  ppage 0x0
                                         r       vpage 0x600003  ppage 0x0
                                         rw      vpage 0x600004  ppage 0x3
                                         rw      vpage 0x600005  ppage 0x3
                                         rw      vpage 0x600006  ppage 0x3
                                         r       vpage 0x600007  ppage 0x1
-vm_create       (10274, 10275)
+vm_create       (2662, 2663)
 vm_create returned 0
-                                        returning to (10274) with pages:
+                                        returning to (2662) with pages:
                                         r       vpage 0x600002  ppage 0x0
                                         r       vpage 0x600003  ppage 0x0
-                                        r       vpage 0x600004  ppage 0x3
-                                        r       vpage 0x600005  ppage 0x3
-                                        r       vpage 0x600006  ppage 0x3
+                                        rw      vpage 0x600004  ppage 0x3
+                                        rw      vpage 0x600005  ppage 0x3
+                                        rw      vpage 0x600006  ppage 0x3
                                         r       vpage 0x600007  ppage 0x1
-vm_switch       (10275)
-                                        returning to (10275) with pages:
-                                        r       vpage 0x600004  ppage 0x3
-                                        r       vpage 0x600005  ppage 0x3
-                                        r       vpage 0x600006  ppage 0x3
+vm_switch       (2663)
+                                        returning to (2663) with pages:
+                                        r       vpage 0x600002  ppage 0x0
+                                        r       vpage 0x600003  ppage 0x0
+                                        rw      vpage 0x600004  ppage 0x3
+                                        rw      vpage 0x600005  ppage 0x3
+                                        rw      vpage 0x600006  ppage 0x3
                                         r       vpage 0x600007  ppage 0x1
-vm_fault        (10275) 0x600000000     write
+vm_fault        (2663)  0x600000000     write
 file_write      <swap>  1
 file_read       <swap>  0
 vm_fault returned 0
-                                        returning to (10275) with pages:
-                                        r       vpage 0x600004  ppage 0x3
-                                        r       vpage 0x600005  ppage 0x3
-                                        r       vpage 0x600006  ppage 0x3
-                                        r       vpage 0x600007  ppage 0x1
-vm_fault        (10275) 0x600000000     write
-file_write      data2.bin       0
-vm_fault returned 0
-                                        returning to (10275) with pages:
-                                        rw      vpage 0x600000  ppage 0x3
-vm_map          (10275) 0x600000000     1
-vm_map returned 0x600008000
-                                        returning to (10275) with pages:
-                                        rw      vpage 0x600000  ppage 0x3
-vm_map          (10275) 0x600000000     1
-vm_map returned 0x600009000
-                                        returning to (10275) with pages:
-                                        rw      vpage 0x600000  ppage 0x3
-vm_fault        (10275) 0x600008000     read
-file_read       data3.bin       1
-vm_fault returned 0
-                                        returning to (10275) with pages:
-                                        rw      vpage 0x600000  ppage 0x3
-                                        r       vpage 0x600008  ppage 0x1
-                                        r       vpage 0x600009  ppage 0x1
-vm_create       (10275, 10276)
-vm_create returned 0
-                                        returning to (10275) with pages:
-                                        r       vpage 0x600000  ppage 0x3
-                                        r       vpage 0x600008  ppage 0x1
-                                        r       vpage 0x600009  ppage 0x1
-vm_switch       (10274)
-                                        returning to (10274) with pages:
+                                        returning to (2663) with pages:
                                         r       vpage 0x600002  ppage 0x0
                                         r       vpage 0x600003  ppage 0x0
-vm_fault        (10274) 0x600006001     read
+                                        rw      vpage 0x600004  ppage 0x3
+                                        rw      vpage 0x600005  ppage 0x3
+                                        rw      vpage 0x600006  ppage 0x3
+                                        r       vpage 0x600007  ppage 0x1
+vm_fault        (2663)  0x600000000     write
+file_write      data2.bin       0
+vm_fault returned 0
+                                        returning to (2663) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        r       vpage 0x600002  ppage 0x0
+                                        r       vpage 0x600003  ppage 0x0
+vm_map          (2663)  0x600000000     1
+vm_map returned 0x600008000
+                                        returning to (2663) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        r       vpage 0x600002  ppage 0x0
+                                        r       vpage 0x600003  ppage 0x0
+vm_map          (2663)  0x600000000     1
+vm_map returned 0x600009000
+                                        returning to (2663) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        r       vpage 0x600002  ppage 0x0
+                                        r       vpage 0x600003  ppage 0x0
+vm_fault        (2663)  0x600008000     read
+file_read       data3.bin       1
+vm_fault returned 0
+                                        returning to (2663) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        r       vpage 0x600002  ppage 0x0
+                                        r       vpage 0x600003  ppage 0x0
+                                        r       vpage 0x600008  ppage 0x1
+                                        r       vpage 0x600009  ppage 0x1
+vm_create       (2663, 2664)
+vm_create returned 0
+                                        returning to (2663) with pages:
+                                        r       vpage 0x600000  ppage 0x3
+                                        r       vpage 0x600002  ppage 0x0
+                                        r       vpage 0x600003  ppage 0x0
+                                        r       vpage 0x600008  ppage 0x1
+                                        r       vpage 0x600009  ppage 0x1
+vm_switch       (2662)
+                                        returning to (2662) with pages:
+                                        r       vpage 0x600002  ppage 0x0
+                                        r       vpage 0x600003  ppage 0x0
+vm_fault        (2662)  0x600006001     read
 file_write      <swap>  0
 file_read       data2.bin       0
 vm_fault returned 0
-                                        returning to (10274) with pages:
+                                        returning to (2662) with pages:
                                         r       vpage 0x600002  ppage 0x0
                                         r       vpage 0x600003  ppage 0x0
                                         r       vpage 0x600004  ppage 0x2
                                         r       vpage 0x600005  ppage 0x2
                                         r       vpage 0x600006  ppage 0x2
-vm_fault        (10274) 0x600006001     write
+vm_fault        (2662)  0x600006001     write
 vm_fault returned 0
-                                        returning to (10274) with pages:
+                                        returning to (2662) with pages:
                                         r       vpage 0x600002  ppage 0x0
                                         r       vpage 0x600003  ppage 0x0
                                         rw      vpage 0x600004  ppage 0x2
                                         rw      vpage 0x600005  ppage 0x2
                                         rw      vpage 0x600006  ppage 0x2
-vm_fault        (10274) 0x600007000     write
+vm_fault        (2662)  0x600007000     write
 file_write      <swap>  4
 file_read       data2.bin       5
 vm_fault returned 0
-                                        returning to (10274) with pages:
+                                        returning to (2662) with pages:
                                         r       vpage 0x600002  ppage 0x0
                                         r       vpage 0x600003  ppage 0x0
                                         rw      vpage 0x600007  ppage 0x3
-vm_fault        (10274) 0x600006000     read
+vm_fault        (2662)  0x600006000     read
 vm_fault returned 0
-                                        returning to (10274) with pages:
+                                        returning to (2662) with pages:
                                         r       vpage 0x600002  ppage 0x0
                                         r       vpage 0x600003  ppage 0x0
                                         rw      vpage 0x600004  ppage 0x2
                                         rw      vpage 0x600005  ppage 0x2
                                         rw      vpage 0x600006  ppage 0x2
                                         rw      vpage 0x600007  ppage 0x3
-vm_destroy      (10274)
-vm_switch       (10276)
-                                        returning to (10276) with pages:
+vm_destroy      (2662)
+vm_switch       (2664)
+                                        returning to (2664) with pages:
+                                        r       vpage 0x600002  ppage 0x0
+                                        r       vpage 0x600003  ppage 0x0
                                         rw      vpage 0x600004  ppage 0x2
                                         rw      vpage 0x600005  ppage 0x2
                                         rw      vpage 0x600006  ppage 0x2
                                         rw      vpage 0x600007  ppage 0x3
-vm_destroy      (10276)
-vm_switch       (10275)
-                                        returning to (10275) with pages:
+vm_destroy      (2664)
+vm_switch       (2663)
+                                        returning to (2663) with pages:
+                                        r       vpage 0x600002  ppage 0x0
+                                        r       vpage 0x600003  ppage 0x0
                                         rw      vpage 0x600004  ppage 0x2
                                         rw      vpage 0x600005  ppage 0x2
                                         rw      vpage 0x600006  ppage 0x2
                                         rw      vpage 0x600007  ppage 0x3
-vm_destroy      (10275)
+vm_destroy      (2663)
