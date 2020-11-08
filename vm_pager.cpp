@@ -9,6 +9,8 @@
 using namespace std;
 
 struct pager_page_t{
+    pager_page_t(){}
+    ~pager_page_t(){}
     vector<pair<int, page_table_entry_t*>> page_table_entries;
     //page_table_entry_t* base = nullptr;
     bool reference_bit = false;
@@ -23,11 +25,26 @@ struct pager_page_t{
 };
 
 struct pager_page_table_t {
+    pager_page_table_t(){}
+    ~pager_page_table_t(){}
     //vector<pager_page_t*> entries(VM_ARENA_SIZE/VM_PAGESIZE);
     pager_page_t* entries[VM_ARENA_SIZE/VM_PAGESIZE];
 };
 
 struct process{
+    process(){
+        page_table = new pager_page_table_t;
+        infrastructure_page_table = new page_table_t;
+        for (size_t i = 0; i < VM_ARENA_SIZE/VM_PAGESIZE; i++) {
+            infrastructure_page_table->ptes[i].ppage = 0;
+            infrastructure_page_table->ptes[i].read_enable = 0;
+            infrastructure_page_table->ptes[i].write_enable = 0;
+        }
+    }
+    ~process(){
+        page_table->~pager_page_table_t(); //Not sure why, but this line doesn't work. We're deleting everything else that's dynamically allocated, but this line causes issues
+        delete infrastructure_page_table;
+    }
     pager_page_table_t *page_table;
     page_table_t *infrastructure_page_table;
     pid_t process_id;
@@ -170,6 +187,7 @@ void vm_destroy(){
     page_table_base_register = nullptr; //No current page table since we're deleting the one we're currently running
     for(size_t i = processes[curr_pid]->arena_start; i < processes[curr_pid]->arena_valid_end; i += VM_PAGESIZE){
         pager_page_t* curr_page = processes[curr_pid]->page_table->entries[(i-processes[curr_pid]->arena_start)/VM_PAGESIZE];
+        processes[curr_pid]->page_table->entries[(i-processes[curr_pid]->arena_start)/VM_PAGESIZE] = nullptr;
         unsigned int temp_ppage = curr_page->page_table_entries.front().second->ppage;
         if(!curr_page->swap_backed){ //File backed only removes if the pid matches
             //THIS ACTUALLY WROTE TO THE FILE AND DIDN'T SEEM SAFE. Commenting for now, I don't know if this is necessary or not?
@@ -219,18 +237,18 @@ void vm_destroy(){
                 filebacked_map.erase(to_erase);
                 delete curr_page->filename;
             }
-            //delete curr_page;
+            curr_page->~pager_page_t();
         }
     }
 
     
-    //delete processes[curr_pid]->page_table; //Not sure why, but this line doesn't work. We're deleting everything else that's dynamically allocated, but this line causes issues
+    //processes[curr_pid]->page_table->~pager_page_table_t(); //Not sure why, but this line doesn't work. We're deleting everything else that's dynamically allocated, but this line causes issues
     //delete processes[curr_pid]->infrastructure_page_table; //Delete dynamically allocated memebers of process and dynamically allocated process
 
     // can only call delete[] if you call new[]
     sort(phys_index.begin(), phys_index.end());
     sort(swap_index.begin(), swap_index.end());
-    delete processes[curr_pid];
+    processes[curr_pid]->~process();
     processes.erase(curr_pid); //Remove process from map
 }
 
