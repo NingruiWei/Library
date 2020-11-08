@@ -234,8 +234,11 @@ void vm_destroy(){
             else{
                 string to_erase(curr_page->filename);
                 to_erase += "-" + to_string(curr_page->block);
+                delete filebacked_map[to_erase];
+                filebacked_map[to_erase] = nullptr;
                 filebacked_map.erase(to_erase);
                 delete curr_page->filename;
+                continue;
             }
             curr_page->~pager_page_t();
         }
