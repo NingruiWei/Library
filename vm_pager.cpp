@@ -95,8 +95,8 @@ int vm_create(pid_t parent_pid, pid_t child_pid){
         process* parent_process = processes[parent_pid];
         process* child_process = new process;
         child_process->process_id = child_pid;
-        child_process->infrastructure_page_table = new page_table_t;
-        child_process->page_table = new pager_page_table_t;
+        //child_process->infrastructure_page_table = new page_table_t;
+        //child_process->page_table = new pager_page_table_t;
 
         for(size_t i = 0; i < sizeof(parent_process->page_table->entries) / sizeof(parent_process->page_table->entries)[0]; i++){
             pager_page_t* curr_parent_entry = parent_process->page_table->entries[i];
@@ -152,8 +152,8 @@ int vm_create(pid_t parent_pid, pid_t child_pid){
     else{
         process* temp_process = new process;
         temp_process->process_id = child_pid;
-        temp_process->infrastructure_page_table = new page_table_t;
-        temp_process->page_table = new pager_page_table_t;
+        //temp_process->infrastructure_page_table = new page_table_t;
+        //temp_process->page_table = new pager_page_table_t;
         assert(processes.find(curr_pid) == processes.end());
         processes[child_pid] = temp_process;
         return 0;
