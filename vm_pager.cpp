@@ -212,6 +212,7 @@ void vm_destroy(){
                 }));
                 swap_index.push_back(reserved_swap_index.front());
                 reserved_swap_index.pop_front();
+                swap_counter--;
                 if (curr_page->page_table_entries.size() == 1 && curr_page->dirty_bit == true && curr_page->reference_bit == true) {
                     curr_page->page_table_entries.front().second->write_enable = true;
                 }
@@ -428,13 +429,13 @@ void *vm_map(const char *filename, unsigned int block){
             temp_page->filename = filename;
             temp_page->block = swap_index.front();
             swap_index.pop_front();
+            swap_counter++;
 
             processes[curr_pid]->arena_valid_end += VM_PAGESIZE;
             processes[curr_pid]->page_table->entries[first_invalid_page] = temp_page;
             processes[curr_pid]->infrastructure_page_table->ptes[first_invalid_page] = *temp_page_table_entry;
             processes[curr_pid]->num_swap_pages++;
 
-            swap_counter++;
             return  (void *) (processes[curr_pid]->arena_valid_end - VM_PAGESIZE);
         }
         else{
@@ -469,12 +470,12 @@ int vm_fault(const void* addr, bool write_flag){
         vm_fault(addr, false); //Hint: Writing to a virtual page that is being shared via copy-on-write should have the same effect on the system as reading it, then writing it.
         pager_page_t* copy_on_write_page = new pager_page_t;
         copy_on_write_page->block = reserved_swap_index.front();
+        reserved_swap_index.pop_front();
         copy_on_write_page->swap_backed = true;
         copy_on_write_page->filename = nullptr;
         copy_on_write_page->in_physmem = curr_page->in_physmem;
         copy_on_write_page->privacy_bit = curr_page->in_physmem;
         copy_on_write_page->page_table_entries.push_back(make_pair(curr_pid, copy_on_page));
-        reserved_swap_index.pop_front();
         processes[curr_pid]->page_table->entries[((uintptr_t) addr - processes[curr_pid]->arena_start) / VM_PAGESIZE] = copy_on_write_page;
         //vm_fault(addr, false); //Hint: Writing to a virtual page that is being shared via copy-on-write should have the same effect on the system as reading it, then writing it.
         copy_on_page_buffer = new char[VM_PAGESIZE];
