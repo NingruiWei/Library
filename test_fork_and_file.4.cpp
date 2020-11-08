@@ -11,10 +11,10 @@ int main()
     char *filebacked_0 = (char*) vm_map(filename, 0);
     char *filebacked_1 = (char*) vm_map(filename, 1);
     char *filebacked_2 = (char*) vm_map(filename, 2);
-    char *filebacked_3 = (char*) vm_map(filename, 3);
+    //char *filebacked_3 = (char*) vm_map(filename, 3);
 
     for(int i = 0; i < 512; i++){
-        cout << filebacked_0[i] << filebacked_1[i] << filebacked_2[i] << filebacked_3[i];
+        cout << filebacked_0[i] << filebacked_1[i] << filebacked_2[i];// << filebacked_3[i];
     }
 
     cout << endl << "forking process" << endl;
@@ -25,12 +25,12 @@ int main()
         strcpy(filebacked_0, "data1.bin");
         strcpy(filebacked_1, "data2.bin");
         strcpy(filebacked_2, "data3.bin");
-        strcpy(filebacked_3, "data4.bin");
+        //strcpy(filebacked_3, "data4.bin");
 
         for(int i = 0; i < 5; i++){
             char *new_filename = (char*) vm_map(nullptr, 0);
             cout << new_filename[i] << endl;
-            cout << filebacked_0[i] << " " << filebacked_1[i] << " " << filebacked_2[i] << " " << filebacked_3[i] << endl;
+            cout << filebacked_0[i] << " " << filebacked_1[i] << " " << filebacked_2[i] << endl;// << " " << filebacked_3[i] << endl;
 
             strcpy(new_filename, "data3.bin");
             cout << new_filename[i] << endl;
@@ -48,17 +48,17 @@ int main()
         char *filebacked_0 = (char*) vm_map(filename, 3);
         char *filebacked_1 = (char*) vm_map(filename, 2);
         char *filebacked_2 = (char*) vm_map(filename, 1);
-        char *filebacked_3 = (char*) vm_map(filename, 0);
+        //char *filebacked_3 = (char*) vm_map(filename, 0);
 
         for(int i = 0; i < 512; i++){
-            cout << filebacked_0[i] << filebacked_1[i] << filebacked_2[i] << filebacked_3[i];
+            cout << filebacked_0[i] << filebacked_1[i] << filebacked_2[i]; //<< filebacked_3[i];
         }
         cout << endl << "parent done" << endl;
     }
 
     fork();
     for(int i = 0; i < 512; i++){
-        cout << filebacked_0[i] << filebacked_1[i] << filebacked_2[i] << filebacked_3[i];
+        cout << filebacked_0[i] << filebacked_1[i] << filebacked_2[i];// << filebacked_3[i];
     }
     cout << endl;
 
