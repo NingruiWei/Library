@@ -450,6 +450,8 @@ int vm_fault(const void* addr, bool write_flag){
     pager_page_t* curr_page = processes[curr_pid]->page_table->entries[ ((uintptr_t) addr - processes[curr_pid]->arena_start) / VM_PAGESIZE]; //Page address is trying to access
     curr_page->reference_bit = true;
 
+    char* copy_on_page_buffer = nullptr;
+
     if(curr_page->swap_backed && write_flag == true && curr_page->page_table_entries.size() > 1){ //Swap backed page that has a copy-on-write, so we must copy before writing
         unsigned int copy_on_ppage = curr_page->page_table_entries.front().second->ppage;
         page_table_entry_t* copy_on_page;
@@ -472,7 +474,7 @@ int vm_fault(const void* addr, bool write_flag){
         reserved_swap_index.pop_front();
         processes[curr_pid]->page_table->entries[((uintptr_t) addr - processes[curr_pid]->arena_start) / VM_PAGESIZE] = copy_on_write_page;
         //vm_fault(addr, false); //Hint: Writing to a virtual page that is being shared via copy-on-write should have the same effect on the system as reading it, then writing it.
-        char* copy_on_page_buffer = new char[VM_PAGESIZE];
+        copy_on_page_buffer = new char[VM_PAGESIZE];
         memcpy(copy_on_page_buffer, &((char*)vm_physmem)[VM_PAGESIZE * copy_on_ppage], VM_PAGESIZE);
         //copy_on_write_page->page_table_entries.push_back(make_pair(curr_pid, &page_table_base_register->ptes[((uintptr_t) addr - processes[curr_pid]->arena_start) / VM_PAGESIZE]));
         curr_page = copy_on_write_page;
@@ -510,6 +512,10 @@ int vm_fault(const void* addr, bool write_flag){
             return -1;
         } 
     }
+    else if(copy_on_page_buffer != nullptr){
+        memcpy(&((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)], copy_on_page_buffer, VM_PAGESIZE);
+        delete copy_on_page_buffer;
+    }
 
     curr_page->in_physmem = true;
     if(write_flag){
@@ -536,6 +542,8 @@ int vm_fault(const void* addr, bool write_flag){
         entry.second->read_enable = curr_page->page_table_entries.front().second->read_enable;
         entry.second->write_enable = curr_page->page_table_entries.front().second->write_enable;
     }
+
+    copy_on_page_buffer = nullptr;
 
     return 0;
 }
