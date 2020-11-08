@@ -39,6 +39,7 @@ struct process{
             infrastructure_page_table->ptes[i].ppage = 0;
             infrastructure_page_table->ptes[i].read_enable = 0;
             infrastructure_page_table->ptes[i].write_enable = 0;
+            page_table->entries[i] = nullptr;
         }
     }
     ~process(){
