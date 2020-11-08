@@ -10,3 +10,6 @@ test_fork_sort.4.cpp
 test_fork_recurse.16.cpp
 test_change_name.4.cpp
 test_fork_and_file.4.cpp
+test_empty_arena.4.cpp
+test_empty_arena_noncon.4.cpp
+test_fork_empty_fork_nonempty.4.cpp
