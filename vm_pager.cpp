@@ -22,6 +22,7 @@ struct pager_page_t{
     bool swap_backed = false;
     bool pinned = false;
     bool in_physmem = false;
+    bool in_clock = false;
     unsigned int physical_page;
 
     void echo_to_ptes(){
@@ -186,6 +187,7 @@ void destroy_clock_page(pager_page_t* destroy_page){
             clocker.pop_front();
         }
         else{
+            clocker.front()->in_clock = false;
             clocker.pop_front(); //remove page that is about to be deleted from clock
             return;
         }
@@ -253,6 +255,7 @@ void vm_destroy(){
                     filebacked_map[to_erase]->dirty_bit = false;
                     filebacked_map[to_erase]->in_physmem = false;
                     filebacked_map[to_erase]->privacy_bit = false;
+                    filebacked_map[to_erase]->in_clock = false;
                     filebacked_map.erase(to_erase);
                 }
                 delete curr_page->filename;
@@ -293,6 +296,7 @@ void evict_page(pager_page_t* reset_page){
     reset_page->reference_bit = false;
     //reset_page->privacy_bit = false; //Privacy bit will tell us if swap-backed has ever been written back to before, meaning we can't just access a zero page for it
     reset_page->in_physmem = false;
+    reset_page->in_clock = false;
 }
 
 void evict(){
@@ -348,6 +352,7 @@ void clock_insert(pager_page_t* insert_page){
 
     insert_page->reference_bit = true;
     insert_page->resident_bit = true;
+    insert_page->in_clock = true;
     // we might need to do the memcpy stuff here after bringing the page into resident (bring into physical mem)
     insert_page->page_table_entries.front().second->ppage = phys_index.front();
     insert_page->physical_page = phys_index.front();
@@ -383,6 +388,7 @@ pager_page_t* new_pager_page(const char* filename, unsigned int block){
     return_pager_page->pinned = false;
     return_pager_page->in_physmem = false;
     return_pager_page->physical_page = 0;
+    return_pager_page->in_clock = false;
 
     return return_pager_page;
 }
@@ -433,7 +439,18 @@ void *vm_map(const char *filename, unsigned int block){
             temp_page_table_entry->ppage = filebacked_map[addition]->physical_page;
             temp_page_table_entry->read_enable = filebacked_map[addition]->reference_bit && filebacked_map[addition]->resident_bit;
             temp_page_table_entry->write_enable = filebacked_map[addition]->reference_bit && filebacked_map[addition]->dirty_bit;
-            if(temp_page_table_entry->read_enable == true){
+            if((temp_page_table_entry->read_enable == true || temp_page_table_entry->write_enable) && filebacked_map[addition]->in_clock == false){
+                if(clocker.size() >= physmem_size){
+                    evict();
+                }
+                filebacked_map[addition]->reference_bit = true;
+                filebacked_map[addition]->resident_bit = true;
+                filebacked_map[addition]->in_clock = true;
+
+                if(filebacked_map[addition]->page_table_entries.size() > 1){
+                    filebacked_map[addition]->echo_to_ptes();
+                }
+
                 clocker.push_back(filebacked_map[addition]);
             }
         }
