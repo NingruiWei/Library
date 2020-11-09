@@ -117,7 +117,7 @@ int vm_create(pid_t parent_pid, pid_t child_pid){
                 if(swap_counter + 1 >= swap_size){ //No space for eager swap reservation
                     return -1;
                 }
-                assert(!swap_index.empty()); //Double check that we still have swap space left
+                //assert(!swap_index.empty()); //Double check that we still have swap space left
 
                 child_process->num_swap_pages++;
                 reserved_swap_index.push_back(swap_index.front()); //reserve swap index for potential copy-on-write
@@ -153,7 +153,7 @@ int vm_create(pid_t parent_pid, pid_t child_pid){
         }
 
         child_process->arena_valid_end = parent_process->arena_valid_end;
-        assert(child_process->num_swap_pages == parent_process->num_swap_pages); //Parent and child should have the same number of swap pages
+        //assert(child_process->num_swap_pages == parent_process->num_swap_pages); //Parent and child should have the same number of swap pages
 
         processes[child_pid] = child_process;
 
@@ -164,7 +164,7 @@ int vm_create(pid_t parent_pid, pid_t child_pid){
         temp_process->process_id = child_pid;
         //temp_process->infrastructure_page_table = new page_table_t;
         //temp_process->page_table = new pager_page_table_t;
-        assert(processes.find(curr_pid) == processes.end());
+        //assert(processes.find(curr_pid) == processes.end());
         processes[child_pid] = temp_process;
         return 0;
     }
@@ -452,7 +452,7 @@ void *vm_map(const char *filename, unsigned int block){
     }
     else{ // swap-backed
         if(swap_counter < swap_size){ //Eager swap reservation check
-            assert(!swap_index.empty()); //Double checks that there is still swap space available
+            //(!swap_index.empty()); //Double checks that there is still swap space available
 
             int first_invalid_page = arena_valid_page_size();
             pager_page_t* temp_page = new_pager_page(filename, block);
