@@ -36,3 +36,8 @@
 *.gcno
 Debug/
 .vscode/
+
+data1.bin
+data2.bin
+data3.bin
+data4.bin
