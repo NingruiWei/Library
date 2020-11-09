@@ -1,0 +1,365 @@
+Pager started with 4 physical memory pages
+vm_create       (6798, 8417)
+vm_create returned 0
+vm_switch       (8417)
+                                        returning to (8417) with pages:
+vm_map          (8417)  0x0     0
+vm_map returned 0x600000000
+                                        returning to (8417) with pages:
+                                        r       vpage 0x600000  ppage 0x0
+vm_fault        (8417)  0x600000000     write
+vm_fault returned 0
+                                        returning to (8417) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+vm_map          (8417)  0x600000000     0
+vm_map returned 0x600001000
+                                        returning to (8417) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+vm_map          (8417)  0x600000000     1
+vm_map returned 0x600002000
+                                        returning to (8417) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+vm_map          (8417)  0x600000000     2
+vm_map returned 0x600003000
+                                        returning to (8417) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+vm_fault        (8417)  0x600001000     read
+file_read       data4.bin       0
+vm_fault returned 0
+                                        returning to (8417) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        r       vpage 0x600001  ppage 0x2
+vm_fault        (8417)  0x600002000     read
+file_read       data4.bin       1
+vm_fault returned 0
+                                        returning to (8417) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        r       vpage 0x600001  ppage 0x2
+                                        r       vpage 0x600002  ppage 0x3
+vm_fault        (8417)  0x600003000     read
+file_write      <swap>  0
+file_read       data4.bin       2
+vm_fault returned 0
+                                        returning to (8417) with pages:
+                                        r       vpage 0x600003  ppage 0x1
+vm_fault        (8417)  0x600001001     read
+vm_fault returned 0
+                                        returning to (8417) with pages:
+                                        r       vpage 0x600001  ppage 0x2
+                                        r       vpage 0x600003  ppage 0x1
+vm_fault        (8417)  0x600002001     read
+vm_fault returned 0
+                                        returning to (8417) with pages:
+                                        r       vpage 0x600001  ppage 0x2
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+vm_create       (8417, 8418)
+vm_create returned 0
+                                        returning to (8417) with pages:
+                                        r       vpage 0x600001  ppage 0x2
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+vm_switch       (8418)
+                                        returning to (8418) with pages:
+                                        r       vpage 0x600001  ppage 0x2
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+vm_fault        (8418)  0x600001000     write
+vm_fault returned 0
+                                        returning to (8418) with pages:
+                                        rw      vpage 0x600001  ppage 0x2
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+vm_fault        (8418)  0x600002000     write
+vm_fault returned 0
+                                        returning to (8418) with pages:
+                                        rw      vpage 0x600001  ppage 0x2
+                                        rw      vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+vm_fault        (8418)  0x600003000     write
+vm_fault returned 0
+                                        returning to (8418) with pages:
+                                        rw      vpage 0x600001  ppage 0x2
+                                        rw      vpage 0x600002  ppage 0x3
+                                        rw      vpage 0x600003  ppage 0x1
+vm_map          (8418)  0x0     0
+vm_map returned 0x600004000
+                                        returning to (8418) with pages:
+                                        rw      vpage 0x600001  ppage 0x2
+                                        rw      vpage 0x600002  ppage 0x3
+                                        rw      vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600004  ppage 0x0
+vm_fault        (8418)  0x600004000     write
+file_write      data4.bin       0
+vm_fault returned 0
+                                        returning to (8418) with pages:
+                                        rw      vpage 0x600004  ppage 0x2
+vm_map          (8418)  0x0     0
+vm_map returned 0x600005000
+                                        returning to (8418) with pages:
+                                        rw      vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x0
+vm_fault        (8418)  0x600001001     read
+file_write      data4.bin       1
+file_read       data4.bin       0
+vm_fault returned 0
+                                        returning to (8418) with pages:
+                                        r       vpage 0x600001  ppage 0x3
+                                        rw      vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x0
+vm_fault        (8418)  0x600002001     read
+file_write      data4.bin       2
+file_read       data4.bin       1
+vm_fault returned 0
+                                        returning to (8418) with pages:
+                                        r       vpage 0x600001  ppage 0x3
+                                        r       vpage 0x600002  ppage 0x1
+                                        rw      vpage 0x600004  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x0
+vm_fault        (8418)  0x600003001     read
+file_write      <swap>  2
+file_read       data4.bin       2
+vm_fault returned 0
+                                        returning to (8418) with pages:
+                                        r       vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600005  ppage 0x0
+vm_fault        (8418)  0x600005000     write
+vm_fault returned 0
+                                        returning to (8418) with pages:
+                                        r       vpage 0x600003  ppage 0x2
+                                        rw      vpage 0x600005  ppage 0x3
+vm_map          (8418)  0x0     0
+vm_map returned 0x600006000
+                                        returning to (8418) with pages:
+                                        r       vpage 0x600003  ppage 0x2
+                                        rw      vpage 0x600005  ppage 0x3
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (8418)  0x600001002     read
+file_read       data4.bin       0
+vm_fault returned 0
+                                        returning to (8418) with pages:
+                                        r       vpage 0x600001  ppage 0x1
+                                        r       vpage 0x600003  ppage 0x2
+                                        rw      vpage 0x600005  ppage 0x3
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (8418)  0x600002002     read
+file_read       data4.bin       1
+vm_fault returned 0
+                                        returning to (8418) with pages:
+                                        r       vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (8418)  0x600003002     read
+file_write      <swap>  3
+file_read       data4.bin       2
+vm_fault returned 0
+                                        returning to (8418) with pages:
+                                        r       vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600003  ppage 0x3
+                                        r       vpage 0x600006  ppage 0x0
+vm_fault        (8418)  0x600006000     write
+vm_fault returned 0
+                                        returning to (8418) with pages:
+                                        r       vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600003  ppage 0x3
+                                        rw      vpage 0x600006  ppage 0x1
+vm_map          (8418)  0x0     0
+vm_map returned 0x600007000
+                                        returning to (8418) with pages:
+                                        r       vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600003  ppage 0x3
+                                        rw      vpage 0x600006  ppage 0x1
+                                        r       vpage 0x600007  ppage 0x0
+vm_fault        (8418)  0x600001003     read
+file_read       data4.bin       0
+vm_fault returned 0
+                                        returning to (8418) with pages:
+                                        r       vpage 0x600001  ppage 0x2
+                                        r       vpage 0x600007  ppage 0x0
+vm_fault        (8418)  0x600002003     read
+file_read       data4.bin       1
+vm_fault returned 0
+                                        returning to (8418) with pages:
+                                        r       vpage 0x600001  ppage 0x2
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600007  ppage 0x0
+vm_fault        (8418)  0x600003003     read
+file_write      <swap>  4
+file_read       data4.bin       2
+vm_fault returned 0
+                                        returning to (8418) with pages:
+                                        r       vpage 0x600001  ppage 0x2
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600007  ppage 0x0
+vm_fault        (8418)  0x600007000     write
+vm_fault returned 0
+                                        returning to (8418) with pages:
+                                        rw      vpage 0x600007  ppage 0x2
+vm_map          (8418)  0x0     0
+vm_map returned 0x600008000
+                                        returning to (8418) with pages:
+                                        rw      vpage 0x600007  ppage 0x2
+                                        r       vpage 0x600008  ppage 0x0
+vm_fault        (8418)  0x600001004     read
+file_read       data4.bin       0
+vm_fault returned 0
+                                        returning to (8418) with pages:
+                                        r       vpage 0x600001  ppage 0x3
+                                        rw      vpage 0x600007  ppage 0x2
+                                        r       vpage 0x600008  ppage 0x0
+vm_fault        (8418)  0x600002004     read
+file_read       data4.bin       1
+vm_fault returned 0
+                                        returning to (8418) with pages:
+                                        r       vpage 0x600001  ppage 0x3
+                                        r       vpage 0x600002  ppage 0x1
+                                        rw      vpage 0x600007  ppage 0x2
+                                        r       vpage 0x600008  ppage 0x0
+vm_fault        (8418)  0x600003004     read
+file_write      <swap>  5
+file_read       data4.bin       2
+vm_fault returned 0
+                                        returning to (8418) with pages:
+                                        r       vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600008  ppage 0x0
+vm_fault        (8418)  0x600008000     write
+vm_fault returned 0
+                                        returning to (8418) with pages:
+                                        r       vpage 0x600003  ppage 0x2
+                                        rw      vpage 0x600008  ppage 0x3
+vm_create       (8418, 8419)
+vm_create returned 0
+                                        returning to (8418) with pages:
+                                        r       vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600008  ppage 0x3
+vm_fault        (8418)  0x600001000     read
+file_read       data4.bin       0
+vm_fault returned 0
+                                        returning to (8418) with pages:
+                                        r       vpage 0x600001  ppage 0x1
+                                        r       vpage 0x600003  ppage 0x2
+                                        r       vpage 0x600008  ppage 0x3
+vm_fault        (8418)  0x600002000     read
+file_read       data4.bin       1
+vm_fault returned 0
+                                        returning to (8418) with pages:
+                                        r       vpage 0x600002  ppage 0x2
+vm_fault        (8418)  0x600003000     read
+file_write      <swap>  6
+file_read       data4.bin       2
+vm_fault returned 0
+                                        returning to (8418) with pages:
+                                        r       vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600003  ppage 0x3
+vm_fault        (8418)  0x600001001     read
+vm_fault returned 0
+                                        returning to (8418) with pages:
+                                        r       vpage 0x600001  ppage 0x1
+                                        r       vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600003  ppage 0x3
+vm_destroy      (8418)
+vm_switch       (8417)
+                                        returning to (8417) with pages:
+                                        r       vpage 0x600001  ppage 0x1
+                                        r       vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600003  ppage 0x3
+vm_map          (8417)  0x0     0
+vm_map returned 0x600004000
+                                        returning to (8417) with pages:
+                                        r       vpage 0x600001  ppage 0x1
+                                        r       vpage 0x600002  ppage 0x2
+                                        r       vpage 0x600003  ppage 0x3
+                                        r       vpage 0x600004  ppage 0x0
+vm_fault        (8417)  0x600004000     write
+vm_fault returned 0
+                                        returning to (8417) with pages:
+                                        rw      vpage 0x600004  ppage 0x1
+vm_map          (8417)  0x600004000     3
+vm_map returned 0x600005000
+                                        returning to (8417) with pages:
+                                        rw      vpage 0x600004  ppage 0x1
+vm_map          (8417)  0x600004000     2
+vm_map returned 0x600006000
+                                        returning to (8417) with pages:
+                                        rw      vpage 0x600004  ppage 0x1
+vm_map          (8417)  0x600004000     1
+vm_map returned 0x600007000
+                                        returning to (8417) with pages:
+                                        rw      vpage 0x600004  ppage 0x1
+vm_fault        (8417)  0x600005000     read
+file_read       data4.bin       3
+vm_fault returned 0
+                                        returning to (8417) with pages:
+                                        rw      vpage 0x600004  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x2
+vm_fault        (8417)  0x600006000     read
+vm_fault returned 0
+                                        returning to (8417) with pages:
+                                        r       vpage 0x600003  ppage 0x3
+                                        rw      vpage 0x600004  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x2
+                                        r       vpage 0x600006  ppage 0x3
+vm_fault        (8417)  0x600007000     read
+file_read       data4.bin       1
+vm_fault returned 0
+                                        returning to (8417) with pages:
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600007  ppage 0x3
+vm_fault        (8417)  0x600005001     read
+vm_fault returned 0
+                                        returning to (8417) with pages:
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600005  ppage 0x2
+                                        r       vpage 0x600007  ppage 0x3
+vm_fault        (8417)  0x600006001     read
+file_write      <swap>  1
+file_read       data4.bin       2
+vm_fault returned 0
+                                        returning to (8417) with pages:
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x2
+                                        r       vpage 0x600006  ppage 0x1
+                                        r       vpage 0x600007  ppage 0x3
+vm_create       (8417, 8420)
+vm_create returned 0
+                                        returning to (8417) with pages:
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600005  ppage 0x2
+                                        r       vpage 0x600006  ppage 0x1
+                                        r       vpage 0x600007  ppage 0x3
+vm_fault        (8417)  0x600001000     read
+file_read       data4.bin       0
+vm_fault returned 0
+                                        returning to (8417) with pages:
+                                        r       vpage 0x600001  ppage 0x2
+vm_fault        (8417)  0x600002000     read
+vm_fault returned 0
+                                        returning to (8417) with pages:
+                                        r       vpage 0x600001  ppage 0x2
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600007  ppage 0x3
+vm_fault        (8417)  0x600003000     read
+vm_fault returned 0
+                                        returning to (8417) with pages:
+                                        r       vpage 0x600001  ppage 0x2
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600006  ppage 0x1
+                                        r       vpage 0x600007  ppage 0x3
+vm_destroy      (8417)
+vm_switch       (8419)
+                                        returning to (8419) with pages:
+                                        r       vpage 0x600001  ppage 0x2
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+vm_destroy      (8419)
+vm_switch       (8420)
+                                        returning to (8420) with pages:
+                                        r       vpage 0x600001  ppage 0x2
+                                        r       vpage 0x600002  ppage 0x3
+                                        r       vpage 0x600003  ppage 0x1
+                                        r       vpage 0x600006  ppage 0x1
+                                        r       vpage 0x600007  ppage 0x3
+vm_destroy      (8420)

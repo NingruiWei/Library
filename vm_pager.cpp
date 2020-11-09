@@ -22,6 +22,7 @@ struct pager_page_t{
     bool swap_backed = false;
     bool pinned = false;
     bool in_physmem = false;
+    unsigned int physical_page;
 };
 
 struct pager_page_table_t {
@@ -236,9 +237,16 @@ void vm_destroy(){
             else{
                 string to_erase(curr_page->filename);
                 to_erase += "-" + to_string(curr_page->block);
-                delete filebacked_map[to_erase];
-                filebacked_map[to_erase] = nullptr;
-                filebacked_map.erase(to_erase);
+                if(processes.size() == 1){
+                    //delete filebacked_map[to_erase];
+                    //filebacked_map[to_erase] = nullptr;
+                    filebacked_map[to_erase]->reference_bit = false;
+                    filebacked_map[to_erase]->resident_bit = false;
+                    filebacked_map[to_erase]->dirty_bit = false;
+                    filebacked_map[to_erase]->in_physmem = false;
+                    filebacked_map[to_erase]->privacy_bit = false;
+                    filebacked_map.erase(to_erase);
+                }
                 delete curr_page->filename;
                 continue;
             }
@@ -300,6 +308,8 @@ void evict(){
                file_write(clocker.front()->filename, clocker.front()->block, &((char *)vm_physmem)[VM_PAGESIZE * clocker.front()->page_table_entries.front().second->ppage]);
             }
             phys_index.push_back(clocker.front()->page_table_entries.front().second->ppage);
+            sort(phys_index.begin(), phys_index.end());
+            clocker.front()->physical_page = 0;
             phys_counter--;
             evict_page(clocker.front());
 
@@ -324,6 +334,7 @@ void clock_insert(pager_page_t* insert_page){
     insert_page->resident_bit = true;
     // we might need to do the memcpy stuff here after bringing the page into resident (bring into physical mem)
     insert_page->page_table_entries.front().second->ppage = phys_index.front();
+    insert_page->physical_page = phys_index.front();
     phys_index.pop_front();
     phys_counter++;
 
@@ -351,6 +362,7 @@ pager_page_t* new_pager_page(const char* filename, unsigned int block){
     return_pager_page->reference_bit = false;
     return_pager_page->pinned = false;
     return_pager_page->in_physmem = false;
+    return_pager_page->physical_page = 0;
 
     return return_pager_page;
 }
@@ -398,8 +410,14 @@ void *vm_map(const char *filename, unsigned int block){
             temp_page_table_entry->write_enable = filebacked_map[addition]->page_table_entries.front().second->write_enable;
         }
         else{
-            enable_page_protection(temp_page_table_entry);
+            temp_page_table_entry->ppage = filebacked_map[addition]->physical_page;
+            temp_page_table_entry->read_enable = filebacked_map[addition]->reference_bit && filebacked_map[addition]->resident_bit;
+            temp_page_table_entry->write_enable = filebacked_map[addition]->reference_bit && filebacked_map[addition]->dirty_bit;
+            if(temp_page_table_entry->read_enable == true){
+                clocker.push_back(filebacked_map[addition]);
+            }
         }
+        filebacked_map[addition]->filename = copy_str;
         filebacked_map[addition]->page_table_entries.push_back(make_pair(curr_pid, temp_page_table_entry));
 
         //Add page, from filebacked_map, to current process page table

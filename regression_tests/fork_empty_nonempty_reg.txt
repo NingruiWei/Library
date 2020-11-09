@@ -1,0 +1,81 @@
+Pager started with 4 physical memory pages
+vm_create       (6798, 8649)
+vm_create returned 0
+vm_switch       (8649)
+                                        returning to (8649) with pages:
+vm_create       (8649, 8650)
+vm_create returned 0
+                                        returning to (8649) with pages:
+vm_map          (8649)  0x0     0
+vm_map returned 0x600000000
+                                        returning to (8649) with pages:
+                                        r       vpage 0x600000  ppage 0x0
+vm_fault        (8649)  0x600000000     write
+vm_fault returned 0
+                                        returning to (8649) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+vm_map          (8649)  0x600000000     0
+vm_map returned 0x600001000
+                                        returning to (8649) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+vm_create       (8649, 8651)
+vm_create returned 0
+                                        returning to (8649) with pages:
+                                        r       vpage 0x600000  ppage 0x1
+vm_create       (8649, 8652)
+vm_create returned 0
+                                        returning to (8649) with pages:
+                                        r       vpage 0x600000  ppage 0x1
+vm_fault        (8649)  0x600001000     write
+file_read       data2.bin       0
+vm_fault returned 0
+                                        returning to (8649) with pages:
+                                        r       vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600001  ppage 0x2
+vm_destroy      (8649)
+vm_switch       (8650)
+                                        returning to (8650) with pages:
+vm_map          (8650)  0x0     0
+vm_map returned 0x600000000
+                                        returning to (8650) with pages:
+                                        r       vpage 0x600000  ppage 0x0
+vm_fault        (8650)  0x600000000     write
+vm_fault returned 0
+                                        returning to (8650) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+vm_map          (8650)  0x600000000     0
+vm_map returned 0x600001000
+                                        returning to (8650) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        rw      vpage 0x600001  ppage 0x2
+vm_create       (8650, 8653)
+vm_create returned 0
+                                        returning to (8650) with pages:
+                                        r       vpage 0x600000  ppage 0x3
+                                        rw      vpage 0x600001  ppage 0x2
+vm_create       (8650, 8654)
+vm_create returned 0
+                                        returning to (8650) with pages:
+                                        r       vpage 0x600000  ppage 0x3
+                                        rw      vpage 0x600001  ppage 0x2
+vm_destroy      (8650)
+vm_switch       (8651)
+                                        returning to (8651) with pages:
+                                        r       vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600001  ppage 0x2
+vm_destroy      (8651)
+vm_switch       (8652)
+                                        returning to (8652) with pages:
+                                        rw      vpage 0x600000  ppage 0x1
+                                        rw      vpage 0x600001  ppage 0x2
+vm_destroy      (8652)
+vm_switch       (8653)
+                                        returning to (8653) with pages:
+                                        r       vpage 0x600000  ppage 0x3
+                                        rw      vpage 0x600001  ppage 0x2
+vm_destroy      (8653)
+vm_switch       (8654)
+                                        returning to (8654) with pages:
+                                        rw      vpage 0x600000  ppage 0x3
+                                        rw      vpage 0x600001  ppage 0x2
+vm_destroy      (8654)
