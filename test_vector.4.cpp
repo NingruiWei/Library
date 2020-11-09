@@ -11,7 +11,7 @@ string s;
 int main()
 {
     int i = 0;
-    while( i < 1000){
+    while( i < 2000){
         cout << i << "ith loop" << endl;
         char *filename = (char *) vm_map(nullptr, 0);
         s = "shakespeare.txt";

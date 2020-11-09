@@ -235,7 +235,7 @@ void vm_destroy(){
         }
 
         if(curr_page->page_table_entries.size() == 0){
-            if(curr_page->resident_bit == true){
+            if(curr_page->resident_bit == true && curr_page->swap_backed == true){
                 phys_index.push_back(temp_ppage);
                 phys_counter--;
                 destroy_clock_page(curr_page);
@@ -258,7 +258,7 @@ void vm_destroy(){
                     filebacked_map[to_erase]->in_clock = false;
                     filebacked_map.erase(to_erase);
                 }
-                delete curr_page->filename;
+                //delete curr_page->filename;
                 continue;
             }
             curr_page->~pager_page_t();
@@ -303,8 +303,10 @@ void evict(){
     while(1){ 
         if(clocker.front()->reference_bit == true || clocker.front()->pinned == true){ //Clock hand pointing at page with reference of "1"
             clocker.front()->reference_bit = false;
-            clocker.front()->page_table_entries.front().second->read_enable = false; //Lose privelages when you lose your reference
-            clocker.front()->page_table_entries.front().second->write_enable = false;
+            if(!clocker.front()->page_table_entries.empty()){
+                clocker.front()->page_table_entries.front().second->read_enable = false; //Lose privelages when you lose your reference
+                clocker.front()->page_table_entries.front().second->write_enable = false;
+            }
 
             if(clocker.front()->page_table_entries.size() > 1){
                 clocker.front()->echo_to_ptes();
@@ -321,9 +323,17 @@ void evict(){
         }
         else{  //Clock hand pointing at page with reference of "0"
             if(clocker.front()->dirty_bit == true && (clocker.front()->filename != nullptr || clocker.front()->privacy_bit == true)){
-               file_write(clocker.front()->filename, clocker.front()->block, &((char *)vm_physmem)[VM_PAGESIZE * clocker.front()->page_table_entries.front().second->ppage]);
+                if(!clocker.front()->page_table_entries.empty()){
+                    file_write(clocker.front()->filename, clocker.front()->block, &((char *)vm_physmem)[VM_PAGESIZE * clocker.front()->page_table_entries.front().second->ppage]);
+                }
             }
-            phys_index.push_back(clocker.front()->page_table_entries.front().second->ppage);
+
+            if(!clocker.front()->page_table_entries.empty()){
+                phys_index.push_back(clocker.front()->page_table_entries.front().second->ppage);
+            }
+            else{
+                phys_index.push_back(clocker.front()->physical_page);
+            }
             sort(phys_index.begin(), phys_index.end());
             clocker.front()->physical_page = 0;
             phys_counter--;
