@@ -23,6 +23,14 @@ struct pager_page_t{
     bool pinned = false;
     bool in_physmem = false;
     unsigned int physical_page;
+
+    void echo_to_ptes(){
+        for(pair<int, page_table_entry_t*> entry : page_table_entries){
+            entry.second->ppage = page_table_entries.front().second->ppage;
+            entry.second->read_enable = page_table_entries.front().second->read_enable;
+            entry.second->write_enable = page_table_entries.front().second->write_enable;
+        }
+    }
 };
 
 struct pager_page_table_t {
@@ -293,12 +301,16 @@ void evict(){
             clocker.front()->reference_bit = false;
             clocker.front()->page_table_entries.front().second->read_enable = false; //Lose privelages when you lose your reference
             clocker.front()->page_table_entries.front().second->write_enable = false;
-            
-            for(pair<int, page_table_entry_t*> entry : clocker.front()->page_table_entries){ //Echo loss of reference status to all page table entries managed together (for file-backed)
-                entry.second->ppage = clocker.front()->page_table_entries.front().second->ppage;
-                entry.second->read_enable = clocker.front()->page_table_entries.front().second->read_enable;
-                entry.second->write_enable = clocker.front()->page_table_entries.front().second->write_enable;
+
+            if(clocker.front()->page_table_entries.size() > 1){
+                clocker.front()->echo_to_ptes();
             }
+            
+            // for(pair<int, page_table_entry_t*> entry : clocker.front()->page_table_entries){ //Echo loss of reference status to all page table entries managed together (for file-backed)
+            //     entry.second->ppage = clocker.front()->page_table_entries.front().second->ppage;
+            //     entry.second->read_enable = clocker.front()->page_table_entries.front().second->read_enable;
+            //     entry.second->write_enable = clocker.front()->page_table_entries.front().second->write_enable;
+            // }
 
             clocker.push_back(clocker.front());
             clocker.pop_front();
@@ -313,10 +325,14 @@ void evict(){
             phys_counter--;
             evict_page(clocker.front());
 
-            for(pair<int, page_table_entry_t*> entry : clocker.front()->page_table_entries){ //Echo evicition to all page table entries managed together (mostly for file-backed that have the same filename and block)
-                entry.second->ppage = clocker.front()->page_table_entries.front().second->ppage;
-                entry.second->read_enable = clocker.front()->page_table_entries.front().second->read_enable;
-                entry.second->write_enable = clocker.front()->page_table_entries.front().second->write_enable;
+            // for(pair<int, page_table_entry_t*> entry : clocker.front()->page_table_entries){ //Echo evicition to all page table entries managed together (mostly for file-backed that have the same filename and block)
+            //     entry.second->ppage = clocker.front()->page_table_entries.front().second->ppage;
+            //     entry.second->read_enable = clocker.front()->page_table_entries.front().second->read_enable;
+            //     entry.second->write_enable = clocker.front()->page_table_entries.front().second->write_enable;
+            // }
+
+            if(clocker.front()->page_table_entries.size() > 1){
+                clocker.front()->echo_to_ptes();
             }
             
             clocker.pop_front();
@@ -338,10 +354,14 @@ void clock_insert(pager_page_t* insert_page){
     phys_index.pop_front();
     phys_counter++;
 
-    for(pair<int, page_table_entry_t*> entry : insert_page->page_table_entries){
-        entry.second->ppage = insert_page->page_table_entries.front().second->ppage;
-        entry.second->read_enable = insert_page->page_table_entries.front().second->read_enable;
-        entry.second->write_enable = insert_page->page_table_entries.front().second->write_enable;
+    // for(pair<int, page_table_entry_t*> entry : insert_page->page_table_entries){
+    //     entry.second->ppage = insert_page->page_table_entries.front().second->ppage;
+    //     entry.second->read_enable = insert_page->page_table_entries.front().second->read_enable;
+    //     entry.second->write_enable = insert_page->page_table_entries.front().second->write_enable;
+    // }
+
+    if(insert_page->page_table_entries.size() > 1){
+        insert_page->echo_to_ptes();
     }
 
     clocker.push_back(insert_page); //Push back is inserting the element and then moving the hand one place forward
@@ -560,10 +580,14 @@ int vm_fault(const void* addr, bool write_flag){
         curr_page->page_table_entries.front().second->read_enable = true;
     }
 
-    for(pair<int, page_table_entry_t*> entry : curr_page->page_table_entries){
-        entry.second->ppage = curr_page->page_table_entries.front().second->ppage;
-        entry.second->read_enable = curr_page->page_table_entries.front().second->read_enable;
-        entry.second->write_enable = curr_page->page_table_entries.front().second->write_enable;
+    // for(pair<int, page_table_entry_t*> entry : curr_page->page_table_entries){
+    //     entry.second->ppage = curr_page->page_table_entries.front().second->ppage;
+    //     entry.second->read_enable = curr_page->page_table_entries.front().second->read_enable;
+    //     entry.second->write_enable = curr_page->page_table_entries.front().second->write_enable;
+    // }
+
+    if(curr_page->page_table_entries.size() > 1){
+        curr_page->echo_to_ptes();
     }
 
     copy_on_page_buffer = nullptr;
