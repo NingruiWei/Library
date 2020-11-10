@@ -511,6 +511,26 @@ void *vm_map(const char *filename, unsigned int block){
     return nullptr;
 }
 
+void read_fail(){
+    pager_page_t *temp = clocker.back();
+    if (!temp->page_table_entries.empty()) {
+        phys_index.push_back(temp->page_table_entries.front().second->ppage);
+        enable_page_protection(temp->page_table_entries.front().second);
+    }
+    else {
+        phys_index.push_back(temp->physical_page);
+    }
+    temp->physical_page = 0;
+    temp->in_physmem = false;
+    temp->reference_bit = false;
+    temp->resident_bit = false;
+    temp->in_clock = false;
+    if (temp->page_table_entries.size() > 1) {
+        temp->echo_to_ptes();
+    }
+    clocker.pop_back();
+}
+
 int vm_fault(const void* addr, bool write_flag){
     
     if((uintptr_t) addr >= (processes[curr_pid]->arena_valid_end)){ //(Address - Start of Addresss Space) >= End of Valid Address space is an illegal call
@@ -567,6 +587,7 @@ int vm_fault(const void* addr, bool write_flag){
         if(result == -1){
             //file_read was a failure
             //assert(false);
+            read_fail();
             return -1;
         }
     }
@@ -579,6 +600,7 @@ int vm_fault(const void* addr, bool write_flag){
         if(result == -1){
             //file_read was a failure
             //assert(false);
+            read_fail();
             return -1;
         } 
     }
