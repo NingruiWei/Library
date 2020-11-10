@@ -18,3 +18,6 @@ test_vector.4.cpp
 test.4.cpp
 test_empty_forking.4.cpp
 test_selection.4.cpp
+test_fork_sort.100.cpp
+test_vector.100.cpp
+test_fork_and_file.10.cpp
