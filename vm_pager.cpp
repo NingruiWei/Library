@@ -322,7 +322,7 @@ void evict(){
             clocker.pop_front();
         }
         else{  //Clock hand pointing at page with reference of "0"
-            if(clocker.front()->dirty_bit == true && (clocker.front()->filename != nullptr || clocker.front()->privacy_bit == true)){
+            if(clocker.front()->dirty_bit == true && clocker.front()->physical_page != 0 && (clocker.front()->filename != nullptr || clocker.front()->privacy_bit == true)){
                 if(!clocker.front()->page_table_entries.empty()){
                     file_write(clocker.front()->filename, clocker.front()->block, &((char *)vm_physmem)[VM_PAGESIZE * clocker.front()->page_table_entries.front().second->ppage]);
                 }
@@ -573,7 +573,7 @@ int vm_fault(const void* addr, bool write_flag){
         curr_page = copy_on_write_page;
     }
 
-    if(curr_page->resident_bit == false){
+    if(curr_page->resident_bit == false && (curr_page->swap_backed == false || curr_page->physical_page != 0 || write_flag || (curr_page->swap_backed == true && curr_page->privacy_bit))){
         clock_insert(curr_page);
     }
     
@@ -581,9 +581,6 @@ int vm_fault(const void* addr, bool write_flag){
         memcpy(&((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)], &((char *) vm_physmem)[VM_PAGESIZE * buff_index], VM_PAGESIZE);
         //file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)]);
         //((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)] = ((char *) vm_physmem)[VM_PAGESIZE * buff_index];
-        if(write_flag == true){
-            curr_page->privacy_bit = true;
-        }
     }
     else if(curr_page->swap_backed == true && curr_page->privacy_bit == true && !curr_page->in_physmem){
         int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)]);
@@ -596,9 +593,6 @@ int vm_fault(const void* addr, bool write_flag){
     }
     else if(!curr_page->in_physmem){
         //File backed
-        if(write_flag == true){
-            curr_page->privacy_bit = true;
-        }
         int result = file_read(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * (curr_page->page_table_entries.front().second->ppage)]);
         if(result == -1){
             //file_read was a failure
@@ -617,9 +611,7 @@ int vm_fault(const void* addr, bool write_flag){
         curr_page->page_table_entries.front().second->read_enable = true;
         curr_page->page_table_entries.front().second->write_enable = true;
         curr_page->dirty_bit = true;
-        if (curr_page->swap_backed == false) {
-            curr_page->privacy_bit = true;
-        }
+        curr_page->privacy_bit = true;
     }
     else{
         if(curr_page->page_table_entries.front().second->write_enable == true || curr_page->in_physmem == true){
