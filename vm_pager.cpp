@@ -326,6 +326,9 @@ void evict(){
                 if(!clocker.front()->page_table_entries.empty()){
                     file_write(clocker.front()->filename, clocker.front()->block, &((char *)vm_physmem)[VM_PAGESIZE * clocker.front()->page_table_entries.front().second->ppage]);
                 }
+                else {
+                    file_write(clocker.front()->filename, clocker.front()->block, &((char *)vm_physmem)[VM_PAGESIZE * clocker.front()->physical_page]);
+                }
             }
 
             if(!clocker.front()->page_table_entries.empty()){
@@ -614,6 +617,9 @@ int vm_fault(const void* addr, bool write_flag){
         curr_page->page_table_entries.front().second->read_enable = true;
         curr_page->page_table_entries.front().second->write_enable = true;
         curr_page->dirty_bit = true;
+        if (curr_page->swap_backed == false) {
+            curr_page->privacy_bit = true;
+        }
     }
     else{
         if(curr_page->page_table_entries.front().second->write_enable == true || curr_page->in_physmem == true){
