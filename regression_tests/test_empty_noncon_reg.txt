@@ -1,0 +1,68 @@
+Pager started with 4 physical memory pages
+vm_create	(4262, 5026)
+vm_create returned 0
+vm_switch	(5026)
+					returning to (5026) with pages:
+vm_create	(5026, 5027)
+vm_create returned 0
+					returning to (5026) with pages:
+vm_map		(5026)	0x0	0
+vm_map returned 0x600000000
+					returning to (5026) with pages:
+					r	vpage 0x600000	ppage 0x0
+vm_map		(5026)	0x0	0
+vm_map returned 0x600001000
+					returning to (5026) with pages:
+					r	vpage 0x600000	ppage 0x0
+					r	vpage 0x600001	ppage 0x0
+vm_fault	(5026)	0x600000ffb	write
+vm_fault returned 0
+					returning to (5026) with pages:
+					rw	vpage 0x600000	ppage 0x1
+					r	vpage 0x600001	ppage 0x0
+vm_fault	(5026)	0x600001000	write
+vm_fault returned 0
+					returning to (5026) with pages:
+					rw	vpage 0x600000	ppage 0x1
+					rw	vpage 0x600001	ppage 0x2
+vm_map		(5026)	0x600000ffb	0
+vm_map returned 0x600002000
+					returning to (5026) with pages:
+					rw	vpage 0x600000	ppage 0x1
+					rw	vpage 0x600001	ppage 0x2
+vm_fault	(5026)	0x600002000	read
+file_read	data4.bin	0
+vm_fault returned 0
+					returning to (5026) with pages:
+					rw	vpage 0x600000	ppage 0x1
+					rw	vpage 0x600001	ppage 0x2
+					r	vpage 0x600002	ppage 0x3
+vm_destroy	(5026)
+vm_switch	(5027)
+					returning to (5027) with pages:
+vm_map		(5027)	0x0	0
+vm_map returned 0x600000000
+					returning to (5027) with pages:
+					r	vpage 0x600000	ppage 0x0
+vm_map		(5027)	0x0	0
+vm_map returned 0x600001000
+					returning to (5027) with pages:
+					r	vpage 0x600000	ppage 0x0
+					r	vpage 0x600001	ppage 0x0
+vm_fault	(5027)	0x600000ffb	write
+vm_fault returned 0
+					returning to (5027) with pages:
+					rw	vpage 0x600000	ppage 0x1
+					r	vpage 0x600001	ppage 0x0
+vm_fault	(5027)	0x600001000	write
+vm_fault returned 0
+					returning to (5027) with pages:
+					rw	vpage 0x600000	ppage 0x1
+					rw	vpage 0x600001	ppage 0x2
+vm_map		(5027)	0x600000ffb	0
+vm_map returned 0x600002000
+					returning to (5027) with pages:
+					rw	vpage 0x600000	ppage 0x1
+					rw	vpage 0x600001	ppage 0x2
+					r	vpage 0x600002	ppage 0x3
+vm_destroy	(5027)

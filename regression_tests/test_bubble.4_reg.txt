@@ -1,0 +1,162 @@
+Pager started with 4 physical memory pages
+vm_create	(4262, 4657)
+vm_create returned 0
+vm_switch	(4657)
+					returning to (4657) with pages:
+vm_create	(4657, 4658)
+vm_create returned 0
+					returning to (4657) with pages:
+vm_map		(4657)	0x0	0
+vm_map returned 0x600000000
+					returning to (4657) with pages:
+					r	vpage 0x600000	ppage 0x0
+vm_map		(4657)	0x0	0
+vm_map returned 0x600001000
+					returning to (4657) with pages:
+					r	vpage 0x600000	ppage 0x0
+					r	vpage 0x600001	ppage 0x0
+vm_fault	(4657)	0x600000ffb	write
+vm_fault returned 0
+					returning to (4657) with pages:
+					rw	vpage 0x600000	ppage 0x1
+					r	vpage 0x600001	ppage 0x0
+vm_fault	(4657)	0x600001000	write
+vm_fault returned 0
+					returning to (4657) with pages:
+					rw	vpage 0x600000	ppage 0x1
+					rw	vpage 0x600001	ppage 0x2
+vm_map		(4657)	0x600000ffb	0
+vm_map returned 0x600002000
+					returning to (4657) with pages:
+					rw	vpage 0x600000	ppage 0x1
+					rw	vpage 0x600001	ppage 0x2
+vm_map		(4657)	0x600000ffb	0
+vm_map returned 0x600003000
+					returning to (4657) with pages:
+					rw	vpage 0x600000	ppage 0x1
+					rw	vpage 0x600001	ppage 0x2
+vm_map		(4657)	0x600000000	1
+vm_map returned 0x600004000
+					returning to (4657) with pages:
+					rw	vpage 0x600000	ppage 0x1
+					rw	vpage 0x600001	ppage 0x2
+vm_fault	(4657)	0x600002000	read
+file_read	data4.bin	0
+vm_fault returned 0
+					returning to (4657) with pages:
+					rw	vpage 0x600000	ppage 0x1
+					rw	vpage 0x600001	ppage 0x2
+					r	vpage 0x600002	ppage 0x3
+					r	vpage 0x600003	ppage 0x3
+vm_fault	(4657)	0x600002000	write
+vm_fault returned 0
+					returning to (4657) with pages:
+					rw	vpage 0x600000	ppage 0x1
+					rw	vpage 0x600001	ppage 0x2
+					rw	vpage 0x600002	ppage 0x3
+					rw	vpage 0x600003	ppage 0x3
+vm_fault	(4657)	0x600004000	read
+file_write	<swap>	0
+file_read		1
+open: No such file or directory
+vm_fault returned -1
+					returning to (4657) with pages:
+vm_destroy	(4657)
+vm_switch	(4658)
+					returning to (4658) with pages:
+vm_create	(4658, 4660)
+vm_create returned 0
+					returning to (4658) with pages:
+vm_map		(4658)	0x0	0
+vm_map returned 0x600000000
+					returning to (4658) with pages:
+					r	vpage 0x600000	ppage 0x0
+vm_map		(4658)	0x0	0
+vm_map returned 0x600001000
+					returning to (4658) with pages:
+					r	vpage 0x600000	ppage 0x0
+					r	vpage 0x600001	ppage 0x0
+vm_fault	(4658)	0x600000ffb	write
+vm_fault returned 0
+					returning to (4658) with pages:
+					rw	vpage 0x600000	ppage 0x1
+					r	vpage 0x600001	ppage 0x0
+vm_fault	(4658)	0x600001000	write
+vm_fault returned 0
+					returning to (4658) with pages:
+					rw	vpage 0x600000	ppage 0x1
+					rw	vpage 0x600001	ppage 0x2
+vm_map		(4658)	0x600000ffb	0
+vm_map returned 0x600002000
+					returning to (4658) with pages:
+					rw	vpage 0x600000	ppage 0x1
+					rw	vpage 0x600001	ppage 0x2
+vm_map		(4658)	0x600000ffb	0
+vm_map returned 0x600003000
+					returning to (4658) with pages:
+					rw	vpage 0x600000	ppage 0x1
+					rw	vpage 0x600001	ppage 0x2
+vm_map		(4658)	0x600000000	1
+vm_map returned 0x600004000
+					returning to (4658) with pages:
+					rw	vpage 0x600000	ppage 0x1
+					rw	vpage 0x600001	ppage 0x2
+vm_fault	(4658)	0x600002000	read
+vm_fault returned 0
+					returning to (4658) with pages:
+					rw	vpage 0x600000	ppage 0x1
+					rw	vpage 0x600001	ppage 0x2
+					rw	vpage 0x600002	ppage 0x3
+					rw	vpage 0x600003	ppage 0x3
+vm_fault	(4658)	0x600004000	write
+file_write	data4.bin	0
+file_read	data3.bin	1
+vm_fault returned 0
+					returning to (4658) with pages:
+					rw	vpage 0x600004	ppage 0x3
+vm_map		(4658)	0x600000000	1
+vm_map returned 0x600005000
+					returning to (4658) with pages:
+					rw	vpage 0x600000	ppage 0x1
+					rw	vpage 0x600004	ppage 0x3
+					rw	vpage 0x600005	ppage 0x3
+vm_destroy	(4658)
+vm_switch	(4660)
+					returning to (4660) with pages:
+vm_map		(4660)	0x0	0
+vm_map returned 0x600000000
+					returning to (4660) with pages:
+					r	vpage 0x600000	ppage 0x0
+vm_map		(4660)	0x0	0
+vm_map returned 0x600001000
+					returning to (4660) with pages:
+					r	vpage 0x600000	ppage 0x0
+					r	vpage 0x600001	ppage 0x0
+vm_fault	(4660)	0x600000ffb	write
+vm_fault returned 0
+					returning to (4660) with pages:
+					rw	vpage 0x600000	ppage 0x1
+					r	vpage 0x600001	ppage 0x0
+vm_fault	(4660)	0x600001000	write
+vm_fault returned 0
+					returning to (4660) with pages:
+					rw	vpage 0x600000	ppage 0x1
+					rw	vpage 0x600001	ppage 0x2
+vm_map		(4660)	0x600000ffb	0
+vm_map returned 0x600002000
+					returning to (4660) with pages:
+					rw	vpage 0x600000	ppage 0x1
+					rw	vpage 0x600001	ppage 0x2
+vm_map		(4660)	0x600000ffb	0
+vm_map returned 0x600003000
+					returning to (4660) with pages:
+					rw	vpage 0x600000	ppage 0x1
+					rw	vpage 0x600001	ppage 0x2
+vm_fault	(4660)	0x600002000	read
+file_write	data3.bin	1
+file_read	data4.bin	0
+vm_fault returned 0
+					returning to (4660) with pages:
+					r	vpage 0x600002	ppage 0x3
+					r	vpage 0x600003	ppage 0x3
+vm_destroy	(4660)
