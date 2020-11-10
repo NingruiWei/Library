@@ -513,7 +513,7 @@ void *vm_map(const char *filename, unsigned int block){
 
 int vm_fault(const void* addr, bool write_flag){
     
-    if((uintptr_t) addr - processes[curr_pid]->arena_start >= (processes[curr_pid]->arena_valid_end)){ //(Address - Start of Addresss Space) >= End of Valid Address space is an illegal call
+    if((uintptr_t) addr >= (processes[curr_pid]->arena_valid_end)){ //(Address - Start of Addresss Space) >= End of Valid Address space is an illegal call
         return -1;
     }
    
