@@ -292,8 +292,8 @@ void vm_destroy(){
     //delete processes[curr_pid]->infrastructure_page_table; //Delete dynamically allocated memebers of process and dynamically allocated process
 
     // can only call delete[] if you call new[]
-    sort(phys_index.begin(), phys_index.end());
-    sort(swap_index.begin(), swap_index.end());
+    // sort(phys_index.begin(), phys_index.end());
+    // sort(swap_index.begin(), swap_index.end());
     processes[curr_pid]->~process();
     processes.erase(curr_pid); //Remove process from map
 }
@@ -359,7 +359,7 @@ void evict(){
             else{
                 phys_index.push_back(clocker.front()->physical_page);
             }
-            sort(phys_index.begin(), phys_index.end());
+            // sort(phys_index.begin(), phys_index.end());
             clocker.front()->physical_page = 0;
             phys_counter--;
             evict_page(clocker.front());
