@@ -217,10 +217,10 @@ void vm_destroy(){
         curr_page->page_table_entries.erase(remove_if(curr_page->page_table_entries.begin(), curr_page->page_table_entries.end(), [curr_page](pair <int, page_table_entry_t*> entry){
             return entry.first == curr_pid;
         }));
-        if (pteps_size != curr_page->page_table_entries.size() && curr_page->page_table_entries.size() != 0) {
+        if (pteps_size != curr_page->page_table_entries.size() && curr_page->page_table_entries.size() != 0 && curr_page->swap_backed == true) {
             swap_index.push_back(reserved_swap_index.front());
             reserved_swap_index.pop_front();
-            //swap_counter--;
+            swap_counter--;
         }
         if (curr_page->page_table_entries.size() == 1) {
             if (curr_page->resident_bit) {
