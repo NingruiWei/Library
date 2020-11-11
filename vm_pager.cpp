@@ -23,6 +23,7 @@ struct pager_page_t{
     bool pinned = false;
     bool in_physmem = false;
     bool in_clock = false;
+    bool is_zero = false;
     unsigned int physical_page;
 
     void echo_to_ptes(){
@@ -95,6 +96,7 @@ void vm_init(unsigned int memory_pages, unsigned int swap_blocks){
     zero->resident_bit = true;
     zero->pinned = true;
     zero->reference_bit = true;
+    zero->is_zero = true;
     page_table_entry_t * zero_entry = new page_table_entry_t;
     zero_entry->ppage = 0;
     zero->page_table_entries.push_back(make_pair(curr_pid, zero_entry));
@@ -208,16 +210,16 @@ void vm_destroy(){
         processes[curr_pid]->page_table->entries[(i-processes[curr_pid]->arena_start)/VM_PAGESIZE] = nullptr;
         unsigned int temp_ppage = curr_page->page_table_entries.front().second->ppage;
         
-        unsigned int pteps_size = curr_page->page_table_entries.size();
+        bool shared = curr_page->page_table_entries.size() > 1;
         curr_page->page_table_entries.erase(remove_if(curr_page->page_table_entries.begin(), curr_page->page_table_entries.end(), [curr_page](pair <int, page_table_entry_t*> entry){
             return entry.first == curr_pid;
         }));
-        if (pteps_size != curr_page->page_table_entries.size() && curr_page->page_table_entries.size() != 0 && curr_page->swap_backed == true) {
+        if (shared && !(curr_page->page_table_entries.size() > 1) && curr_page->swap_backed == true) {
             swap_index.push_back(reserved_swap_index.front());
             reserved_swap_index.pop_front();
             swap_counter--;
         }
-        if (curr_page->page_table_entries.size() == 1) {
+        if (shared && !(curr_page->page_table_entries.size() > 1) && curr_page->swap_backed == true) {
             if (curr_page->resident_bit) {
                 curr_page->page_table_entries.front().second->ppage = curr_page->physical_page;
             }
@@ -353,6 +355,9 @@ void evict(){
 }
 
 void clock_insert(pager_page_t* insert_page){
+    if (insert_page->is_zero) {
+        insert_page->is_zero = false;
+    }
     if(clocker.size() >= physmem_size){
         evict();
     }
@@ -488,6 +493,9 @@ void *vm_map(const char *filename, unsigned int block){
 
             temp_page->page_table_entries.push_back(make_pair(curr_pid, temp_page_table_entry));
 
+            temp_page->is_zero = true;
+            temp_page->reference_bit = true;
+            temp_page->resident_bit = true;
             temp_page->swap_backed = true;
             temp_page->filename = filename;
             temp_page->block = swap_index.front();
@@ -567,7 +575,8 @@ int vm_fault(const void* addr, bool write_flag){
         curr_page = copy_on_write_page;
     }
 
-    if(curr_page->resident_bit == false && (curr_page->swap_backed == false || curr_page->physical_page != 0 || write_flag || (curr_page->swap_backed == true && curr_page->privacy_bit))){
+    if((curr_page->resident_bit == false && (curr_page->swap_backed == false || curr_page->physical_page != 0 || write_flag 
+    || (curr_page->swap_backed == true && curr_page->privacy_bit))) || curr_page->is_zero == true){
         clock_insert(curr_page);
     }
     
