@@ -14,7 +14,7 @@ pager: ${PAGER_OBJS} libvm_pager.o
 	${CC} -o $@ $^
 
 # Compile an application program
-app: test_fork_and_file.10.cpp libvm_app.o
+app: test_file_and_swap.4.cpp libvm_app.o
 	${CC} -o $@ $^ -ldl
 
 # Generic rules for compiling a source file to an object file

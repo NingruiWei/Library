@@ -267,19 +267,19 @@ void vm_destroy(){
                 swap_counter--;
             }
             else{
-                string to_erase(curr_page->filename);
-                to_erase += "-" + to_string(curr_page->block);
-                if(processes.size() == 1){
-                    //delete filebacked_map[to_erase];
-                    //filebacked_map[to_erase] = nullptr;
-                    filebacked_map[to_erase]->reference_bit = false;
-                    filebacked_map[to_erase]->resident_bit = false;
-                    filebacked_map[to_erase]->dirty_bit = false;
-                    filebacked_map[to_erase]->in_physmem = false;
-                    filebacked_map[to_erase]->privacy_bit = false;
-                    filebacked_map[to_erase]->in_clock = false;
-                    filebacked_map.erase(to_erase);
-                }
+                // string to_erase(curr_page->filename);
+                // to_erase += "-" + to_string(curr_page->block);
+                // if(processes.size() == 1){
+                //     //delete filebacked_map[to_erase];
+                //     //filebacked_map[to_erase] = nullptr;
+                //     filebacked_map[to_erase]->reference_bit = false;
+                //     filebacked_map[to_erase]->resident_bit = false;
+                //     filebacked_map[to_erase]->dirty_bit = false;
+                //     filebacked_map[to_erase]->in_physmem = false;
+                //     filebacked_map[to_erase]->privacy_bit = false;
+                //     filebacked_map[to_erase]->in_clock = false;
+                //     filebacked_map.erase(to_erase);
+                // }
                 //delete curr_page->filename;
                 continue;
             }
