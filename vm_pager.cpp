@@ -117,13 +117,12 @@ int vm_create(pid_t parent_pid, pid_t child_pid){
         child_process->process_id = child_pid;
         //child_process->infrastructure_page_table = new page_table_t;
         //child_process->page_table = new pager_page_table_t;
-
+        
         for(size_t i = 0; i < sizeof(parent_process->page_table->entries) / sizeof(parent_process->page_table->entries)[0]; i++){
             pager_page_t* curr_parent_entry = parent_process->page_table->entries[i];
             if(!curr_parent_entry){
                 break;
             }
-
             if(curr_parent_entry->swap_backed == true){ //Swapbacked page (THIS IS WHERE THE WORKED IS NEEDED)
                 //assert(!swap_index.empty()); //Double check that we still have swap space left
 
@@ -208,11 +207,7 @@ void vm_destroy(){
         pager_page_t* curr_page = processes[curr_pid]->page_table->entries[(i-processes[curr_pid]->arena_start)/VM_PAGESIZE];
         processes[curr_pid]->page_table->entries[(i-processes[curr_pid]->arena_start)/VM_PAGESIZE] = nullptr;
         unsigned int temp_ppage = curr_page->page_table_entries.front().second->ppage;
-        // if(!curr_page->swap_backed){ //File backed only removes if the pid matches
-            //THIS ACTUALLY WROTE TO THE FILE AND DIDN'T SEEM SAFE. Commenting for now, I don't know if this is necessary or not?
-            // if(curr_page->page_table_entries.size() == 1 && curr_page->dirty_bit == true && curr_page->privacy_bit == true){ //Last thing pointing to that file and block, write back its content if dirty
-            //     file_write(curr_page->filename, curr_page->block, &((char *)vm_physmem)[VM_PAGESIZE * curr_page->page_table_entries.front().second->ppage]);
-            // }
+        
         unsigned int pteps_size = curr_page->page_table_entries.size();
         curr_page->page_table_entries.erase(remove_if(curr_page->page_table_entries.begin(), curr_page->page_table_entries.end(), [curr_page](pair <int, page_table_entry_t*> entry){
             return entry.first == curr_pid;
@@ -232,29 +227,6 @@ void vm_destroy(){
             curr_page->page_table_entries.front().second->read_enable = curr_page->reference_bit && curr_page->resident_bit;
             curr_page->page_table_entries.front().second->write_enable = curr_page->reference_bit && curr_page->dirty_bit;
         }
-        // }
-        // else{ //Swap backed should only ever have 1 in its page table entries vector
-            //assert(curr_page->page_table_entries.size() == 1); //No longer true, since a copy-on-write swap backed page would be in its page_table_entries vector
-
-            /*
-                NEED SOME WAY TO FREE UP COPY ON WRITE SWAP BACKED PAGES in the case they were never written to to separate them
-                This is a TEMPORARY solution, but we may need to rethink it
-            */
-        //    if(curr_page->page_table_entries.size() > 1){ //Swap backed page with something that had a reserved copy-on-write swap block, but never wrote (so did not copy)
-        //         curr_page->page_table_entries.erase(remove_if(curr_page->page_table_entries.begin(), curr_page->page_table_entries.end(), [curr_page](pair <int, page_table_entry_t*> entry){
-        //             return entry.first == curr_pid;
-        //         }));
-        //         swap_index.push_back(reserved_swap_index.front());
-        //         reserved_swap_index.pop_front();
-        //         swap_counter--;
-        //         if (curr_page->page_table_entries.size() == 1 && curr_page->dirty_bit == true && curr_page->reference_bit == true) {
-        //             curr_page->page_table_entries.front().second->write_enable = true;
-        //         }
-        //     }
-        //     else{ //Swap backed with nothing reserved for copy-on-write
-        //          curr_page->page_table_entries.pop_back();
-        //     }
-        // }
 
         if(curr_page->page_table_entries.size() == 0){
             if(curr_page->resident_bit == true && curr_page->swap_backed == true){
