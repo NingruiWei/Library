@@ -210,16 +210,16 @@ void vm_destroy(){
         processes[curr_pid]->page_table->entries[(i-processes[curr_pid]->arena_start)/VM_PAGESIZE] = nullptr;
         unsigned int temp_ppage = curr_page->page_table_entries.front().second->ppage;
         
-        bool shared = curr_page->page_table_entries.size() > 1;
+        unsigned int pteps_size = curr_page->page_table_entries.size();
         curr_page->page_table_entries.erase(remove_if(curr_page->page_table_entries.begin(), curr_page->page_table_entries.end(), [curr_page](pair <int, page_table_entry_t*> entry){
             return entry.first == curr_pid;
         }));
-        if (shared && !(curr_page->page_table_entries.size() > 1) && curr_page->swap_backed == true) {
+        if (pteps_size != curr_page->page_table_entries.size() && curr_page->page_table_entries.size() != 0 && curr_page->swap_backed == true) {
             swap_index.push_back(reserved_swap_index.front());
             reserved_swap_index.pop_front();
             swap_counter--;
         }
-        if (shared && !(curr_page->page_table_entries.size() > 1) && curr_page->swap_backed == true) {
+        if (curr_page->page_table_entries.size() == 1) {
             if (curr_page->resident_bit) {
                 curr_page->page_table_entries.front().second->ppage = curr_page->physical_page;
             }
@@ -231,7 +231,7 @@ void vm_destroy(){
         }
 
         if(curr_page->page_table_entries.size() == 0){
-            if(curr_page->resident_bit == true && curr_page->swap_backed == true){
+            if(curr_page->resident_bit == true && curr_page->swap_backed == true && !curr_page->is_zero){
                 phys_index.push_back(temp_ppage);
                 phys_counter--;
                 destroy_clock_page(curr_page);
@@ -241,20 +241,6 @@ void vm_destroy(){
                 swap_counter--;
             }
             else{
-                // string to_erase(curr_page->filename);
-                // to_erase += "-" + to_string(curr_page->block);
-                // if(processes.size() == 1){
-                //     //delete filebacked_map[to_erase];
-                //     //filebacked_map[to_erase] = nullptr;
-                //     filebacked_map[to_erase]->reference_bit = false;
-                //     filebacked_map[to_erase]->resident_bit = false;
-                //     filebacked_map[to_erase]->dirty_bit = false;
-                //     filebacked_map[to_erase]->in_physmem = false;
-                //     filebacked_map[to_erase]->privacy_bit = false;
-                //     filebacked_map[to_erase]->in_clock = false;
-                //     filebacked_map.erase(to_erase);
-                // }
-                //delete curr_page->filename;
                 continue;
             }
             curr_page->~pager_page_t();
