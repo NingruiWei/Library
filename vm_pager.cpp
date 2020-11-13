@@ -16,14 +16,10 @@ struct pager_page_t{
     bool reference_bit = false;
     bool resident_bit = false;
     bool dirty_bit = false;
-    bool privacy_bit = false;
     const char *filename = nullptr;
     unsigned int block = 0;
     bool swap_backed = false;
     bool pinned = false;
-    bool in_physmem = false;
-    bool in_clock = false;
-    bool is_zero = false;
     unsigned int physical_page;
 
     void echo_to_ptes(){
@@ -71,8 +67,8 @@ struct process{
         }
     }
     ~process(){
-        //delete page_table; //Not sure why, but this line doesn't work. We're deleting everything else that's dynamically allocated, but this line causes issues
-        //delete infrastructure_page_table;
+        delete page_table; //Not sure why, but this line doesn't work. We're deleting everything else that's dynamically allocated, but this line causes issues
+        delete infrastructure_page_table;
     }
     pager_page_table_t *page_table;
     page_table_t *infrastructure_page_table;
@@ -114,7 +110,6 @@ void vm_init(unsigned int memory_pages, unsigned int swap_blocks){
     zero->resident_bit = true;
     zero->pinned = true;
     zero->reference_bit = true;
-    zero->is_zero = true;
     page_table_entry_t * zero_entry = new page_table_entry_t;
     zero_entry->ppage = 0;
     zero->page_table_entries.push_back(make_pair(curr_pid, zero_entry));
@@ -158,20 +153,6 @@ bool copy_parent_process(process* parent_process, process* child_process){
 
         curr_parent_entry->page_table_entries.push_back(make_pair(child_process->process_id, curr_child_entry));
         curr_parent_entry->initalize_new_entry();
-        // if(curr_parent_entry->resident_bit){
-        //     curr_child_entry.ppage = curr_parent_entry->physical_page;
-        // }
-        // else{
-        //     curr_child_entry.ppage = 0;
-        // }
-
-        // curr_child_entry.read_enable = curr_parent_entry->reference_bit && curr_parent_entry->resident_bit;
-        // curr_child_entry.write_enable = curr_parent_entry->reference_bit && curr_parent_entry->dirty_bit;
-
-        // if(curr_parent_entry->swap_backed == true && curr_parent_entry->page_table_entries.size() > 1){
-        //     curr_parent_entry->page_table_entries.front().second->write_enable = false;
-        //     curr_parent_entry->echo_to_ptes();
-        // }
 
         child_process->page_table->entries[i] = curr_parent_entry;
     }
@@ -228,23 +209,7 @@ void vm_destroy(){
         }));
 
         if(curr_page_was_shared && !(curr_page->page_table_entries.size() > 1)){
-            //for(pair<int, page_table_entry_t*> entry : curr_page->page_table_entries){
-                curr_page->initalize_new_entry();
-                // if(curr_page->resident_bit){
-                //     entry.second->ppage = curr_page->physical_page;
-                // }
-                // else{
-                //     entry.second->ppage = 0;
-                // }
-
-                // entry.second->ppage = curr_page->reference_bit && curr_page->resident_bit;
-                // entry.second->ppage = curr_page->reference_bit && curr_page->dirty_bit;
-
-                // if(curr_page->swap_backed == true && curr_page->page_table_entries.size() > 1){
-                //     curr_page->page_table_entries.front().second->write_enable = false;
-                //     curr_page->echo_to_ptes();
-                // }
-            //}
+            curr_page->initalize_new_entry();
         }
 
         if(curr_page->swap_backed == true){
@@ -274,9 +239,7 @@ void vm_destroy(){
         }
     }
 	
-    delete processes[curr_pid]->page_table;
-   //delete processes[curr_pid]->infrastructure_page_table;
-    delete processes[curr_pid];
+    processes[curr_pid]->~process();
     processes.erase(curr_pid); //Remove process from ma
 }
 
@@ -304,11 +267,7 @@ pager_page_t* new_pager_page(const char* filename, unsigned int block){
     return_pager_page->reference_bit = false;
     return_pager_page->resident_bit = false;
     return_pager_page->dirty_bit = false;
-    return_pager_page->privacy_bit = false;
     return_pager_page->pinned = false;
-    return_pager_page->is_zero = false;
-    return_pager_page->in_physmem = false;
-    return_pager_page->in_clock = false;
     return_pager_page->physical_page = 0;
 
     return return_pager_page;
