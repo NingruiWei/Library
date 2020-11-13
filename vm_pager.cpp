@@ -347,12 +347,14 @@ void *vm_map(const char *filename, unsigned int block){
         string filename_for_map(copy_str);
         filename_for_map += '-' + to_string(block);
 
+        bool original_filename = false;
         if(filebacked_map.find(filename_for_map) == filebacked_map.end()){//Filename+block not found in map, insert new pager_page_t for that filename+block
             //create new page to add to fileback map
 
             pager_page_t* temp_page = new_pager_page(copy_str, block);
 
             filebacked_map[filename_for_map] = temp_page;
+            original_filename = true;
         }
 
         if(filebacked_map[filename_for_map] == nullptr){ //No virtual page for the filename+block found in the map.
@@ -386,6 +388,10 @@ void *vm_map(const char *filename, unsigned int block){
         //     filebacked_map[filename_for_map]->echo_to_ptes();
         // }
         processes[curr_pid]->page_table->entries[first_invalid_page] = filebacked_map[filename_for_map];
+
+        if(!original_filename){
+            delete copy_str;
+        }
         return (void *)(return_arena_end);
     }
     else{
