@@ -68,7 +68,7 @@ struct process{
     }
     ~process(){
         delete page_table; //Not sure why, but this line doesn't work. We're deleting everything else that's dynamically allocated, but this line causes issues
-        delete infrastructure_page_table;
+        //delete infrastructure_page_table;
     }
     pager_page_table_t *page_table;
     page_table_t *infrastructure_page_table;
@@ -239,7 +239,7 @@ void vm_destroy(){
         }
     }
 	
-    processes[curr_pid]->~process();
+    delete processes[curr_pid];
     processes.erase(curr_pid); //Remove process from ma
 }
 
