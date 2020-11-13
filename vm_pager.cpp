@@ -10,9 +10,7 @@ using namespace std;
 
 struct pager_page_t{
     pager_page_t(){}
-    ~pager_page_t(){ 
-        delete filename;
-    }
+    ~pager_page_t(){}
     vector<pair<int, page_table_entry_t*>> page_table_entries;
     //page_table_entry_t* base = nullptr;
     bool reference_bit = false;
@@ -264,6 +262,9 @@ void vm_destroy(){
             if (curr_page_was_shared && curr_page->page_table_entries.size() > 0){
                 swap_index.push_back(reserved_swap_index.front());
                 reserved_swap_index.pop_front();
+            }
+            else{
+                swap_index.push_back(curr_page->block);
             }
             swap_counter--; 
 
