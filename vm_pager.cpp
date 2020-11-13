@@ -405,6 +405,7 @@ pager_page_t* copy_on_write(const void* addr, pager_page_t* original_page){
 
         vm_fault(addr, false); //Hint: Writing to a virtual page that is being shared via copy-on-write should have the same effect on the system as reading it, then writing it.
         pager_page_t* copy_on_written_page = new_pager_page(nullptr, reserved_swap_index.front());
+        copy_on_written_page->swap_backed = true;
         reserved_swap_index.pop_front();
 
         processes[curr_pid]->page_table->entries[((uintptr_t)addr - (uintptr_t)VM_ARENA_BASEADDR)/VM_PAGESIZE] = copy_on_written_page;
